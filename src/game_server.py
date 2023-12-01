@@ -20,19 +20,19 @@ class GameServer:
             socket.AF_INET, socket.SOCK_STREAM
         )  # create socket
 
-        self.SERVER = socket.gethostbyname(socket.gethostname())  # get local IP;
-        self.ADDRESS = (self.SERVER, Constants.PORT)
+        self.SERVER_IP = socket.gethostbyname(socket.gethostname())  # get local IP;
+        self.ADDRESS = (self.SERVER_IP, Constants.PORT)
 
         self.server_socket.bind(self.ADDRESS)
 
         print("SERVER INITIALIZED: Game created successfully...")
 
-    def handle_client(self, connection, address):
+    def handle_client(self, client_connection, address):
         connected = True
 
         while connected:
             try:
-                message_length = connection.recv(Constants.HEADER_SIZE).decode(
+                message_length = client_connection.recv(Constants.HEADER_SIZE).decode(
                     Constants.FORMAT
                 )  # blocks thread until message is received. decode byte stream with UTF-8.
 
@@ -42,7 +42,9 @@ class GameServer:
 
                 message_length = int(message_length)
 
-                message: str = connection.recv(message_length).decode(Constants.FORMAT)
+                message: str = client_connection.recv(message_length).decode(
+                    Constants.FORMAT
+                )
 
                 if message == Constants.DISCONNECT_MESSAGE:
                     connected = False
@@ -67,7 +69,7 @@ class GameServer:
             except:
                 pass
 
-        connection.close()
+        client_connection.close()
         print(f"SUCCESSFUL DISCONNECTION: {address} has disconnected.")
         # TODO: update number of connected players
 
@@ -77,14 +79,14 @@ class GameServer:
         is_running = True
 
         print(
-            f"SERVER IS RUNNING: Server is listening on {self.SERVER} via port {Constants.PORT}\n"
+            f"SERVER IS RUNNING: Server is listening on {self.SERVER_IP} via port {Constants.PORT}\n"
         )
 
         while is_running:
-            connection, address = self.server_socket.accept()  # blocks thread
+            client_connection, address = self.server_socket.accept()  # blocks thread
 
             thread = threading.Thread(
-                target=self.handle_client, args=(connection, address)
+                target=self.handle_client, args=(client_connection, address)
             )
 
             thread.start()

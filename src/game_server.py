@@ -50,6 +50,7 @@ class GameServer:
 
                 if message == Constants.DISCONNECT_MESSAGE:
                     connected = False
+                    # TODO: remove clients that are disconnected
 
                 print(
                     f"MESSAGE RECEIVED FROM [{address}]: {message}"
@@ -94,14 +95,35 @@ class GameServer:
             thread.start()
 
             self.clients.append(client_connection)
+
             """
             print(
                 f"\nACTIVE CONNECTIONS: {threading.active_count() - 1}"
             )  # how many threads (clients) are active in this process
             """
 
-    def broadcast(self, msg: str):
-        pass
+    def broadcast(
+        self, package: str
+    ):  # TODO: iterate through each of the client connections and broadcast the information to all the players
+        for client in self.clients:
+            self.send(client, package)
+        # for name, player in self.game.players.items():
+        #     self.send(player, package)
 
-    def send(self, player: Player, msg: str):
-        pass
+    def send(self, client, package: str):
+        message = package.encode(
+            Constants.FORMAT
+        )  # encode the string into a byte stream
+
+        message_length = len(message)
+        header = str(message_length).encode(
+            Constants.FORMAT
+        )  # the initial header to send to the server
+
+        header += b" " * (
+            Constants.HEADER_SIZE - len(header)
+        )  # pad the header with the byte representation of a whitespace to ensure that the header is 64 bytes long
+
+        client.send(header)
+        client.send(message)
+        # print("message sent")

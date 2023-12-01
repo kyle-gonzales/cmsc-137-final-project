@@ -25,6 +25,8 @@ class GameServer:
 
         self.server_socket.bind(self.ADDRESS)
 
+        self.clients = []
+
         print("SERVER INITIALIZED: Game created successfully...")
 
     def handle_client(self, client_connection, address):
@@ -90,6 +92,8 @@ class GameServer:
             )
 
             thread.start()
+
+            self.clients.append(client_connection)
             """
             print(
                 f"\nACTIVE CONNECTIONS: {threading.active_count() - 1}"

@@ -94,8 +94,8 @@ class GameServer:
             )  # how many threads (clients) are active in this process
             """
 
-    def broadcast(msg: str):
+    def broadcast(self, msg: str):
         pass
 
-    def send(player: Player, msg: str):
+    def send(self, player: Player, msg: str):
         pass

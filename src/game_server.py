@@ -16,16 +16,16 @@ class GameServer:
     game_stage = Constants.WAITING_FOR_PLAYERS
 
     def __init__(self) -> None:
+        self.clients = []
+        
         self.server_socket = socket.socket(
             socket.AF_INET, socket.SOCK_STREAM
         )  # create socket
-
         self.SERVER_IP = socket.gethostbyname(socket.gethostname())  # get local IP;
         self.ADDRESS = (self.SERVER_IP, Constants.PORT)
 
         self.server_socket.bind(self.ADDRESS)
 
-        self.clients = []
 
         print("SERVER INITIALIZED: Game created successfully...")
 

@@ -14,3 +14,13 @@ class Constants:
     DISCONNECT_MESSAGE = "!DISCONNECT"
 
     HEADER_SIZE = 64
+    
+    # Screen dimensions
+    WIDTH = 1440
+    HEIGHT = 810
+    
+    # Colors
+    GOLD = (253,165,0)
+    MAROON = (147,32,37)
+    GREEN = (0,50,19)
+    WHITE = (255,255,255)

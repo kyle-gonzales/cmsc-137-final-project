@@ -16,8 +16,8 @@ class Constants:
     HEADER_SIZE = 64
     
     # Screen dimensions
-    WIDTH = 1440
-    HEIGHT = 810
+    WIDTH = 960
+    HEIGHT = 540
     
     # Colors
     GOLD = (253,165,0)

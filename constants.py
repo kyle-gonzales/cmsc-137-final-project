@@ -44,6 +44,7 @@ class Constants:
     
     # Font
     # Architype Aubette Source: https://www.onlinewebfonts.com/download/26afb49b8b7dda2c10686589d6fc7b55
-    ARCH32 = pygame.font.Font("Architype_Aubette.ttf", 32)
-    ARCH24 = pygame.font.Font("Architype_Aubette.ttf", 24)
-    ARCH20 = pygame.font.Font("Architype_Aubette.ttf", 20)
+    pygame.init()
+    ARCH32 = pygame.font.Font("Assets/Architype_Aubette.ttf", 32)
+    ARCH24 = pygame.font.Font("Assets/Architype_Aubette.ttf", 24)
+    ARCH20 = pygame.font.Font("Assets/Architype_Aubette.ttf", 20)

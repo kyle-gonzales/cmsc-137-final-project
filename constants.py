@@ -41,3 +41,9 @@ class Constants:
         "I See See": "iseesee.png",
         "Bo Go": "bogo.png"
     }
+    
+    # Font
+    # Architype Aubette Source: https://www.onlinewebfonts.com/download/26afb49b8b7dda2c10686589d6fc7b55
+    ARCH32 = pygame.font.Font("Architype_Aubette.ttf", 32)
+    ARCH24 = pygame.font.Font("Architype_Aubette.ttf", 24)
+    ARCH20 = pygame.font.Font("Architype_Aubette.ttf", 20)

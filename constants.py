@@ -26,6 +26,7 @@ class Constants:
     MAROON = (147,32,37)
     GREEN = (0,50,19)
     WHITE = (255,255,255)
+    BLACK = (0,0,0)
     
     # Power Images
     POWER_IMAGE_NAME = {
@@ -42,6 +43,8 @@ class Constants:
         "Bo Go": "bogo.png"
     }
     
+    IMAGE_PATH = "cmsc-137-final-project/Assets/"
+
     # Font
     # Architype Aubette Source: https://www.onlinewebfonts.com/download/26afb49b8b7dda2c10686589d6fc7b55
     pygame.init()

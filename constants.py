@@ -41,3 +41,8 @@ class Constants:
         "I See See": "iseesee.png",
         "Bo Go": "bogo.png"
     }
+    
+    # Projectile coordinates
+    Yi = 390
+    PXi = 60
+    EXi = 900

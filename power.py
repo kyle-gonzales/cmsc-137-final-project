@@ -12,5 +12,5 @@ class Power:
 class SpecialPower(Power):
   def __init__(self, name:str, cost:int, damage:int, x:int, y:int):
     super().__init__(name, cost, damage)
-    self.x = random.randint(Constants.WIDTH*0.25, Constants.WIDTH*0.75)
-    self.y = random.randint(Constants.HEIGHT*0.2, Constants.HEIGHT*0.6)
+    self.x = random.randint(int(Constants.WIDTH*0.25), int(Constants.WIDTH*0.75))
+    self.y = random.randint(int(Constants.HEIGHT*0.2), int(Constants.HEIGHT*0.6))

@@ -17,6 +17,10 @@ class Constants:
 
     HEADER_SIZE = 64
     
+    # Dynasty names
+    NARCOS = "NARCOS"
+    DUTETE = "DUTETE"
+    
     # Screen dimensions
     WIDTH = 960
     HEIGHT = 540
@@ -26,6 +30,7 @@ class Constants:
     MAROON = (147,32,37)
     GREEN = (0,50,19)
     WHITE = (255,255,255)
+    BLACK = (0,0,0)
     
     # Power Images
     POWER_IMAGE_NAME = {
@@ -46,3 +51,18 @@ class Constants:
     Yi = 390
     PXi = 60
     EXi = 900
+    
+    # Special Power
+    SPSIZE = (60, 60)
+    SPX1 = 250
+    SPX2 = 630
+    SPY1 = 120
+    SPY2 = 220
+    
+    # Font
+    pygame.init()
+    FONT32 = pygame.font.Font(None, 32)
+    FONT24 = pygame.font.Font(None, 24)
+    FONTH20 = pygame.font.Font(None, 20)
+    
+    

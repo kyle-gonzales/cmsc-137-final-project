@@ -13,7 +13,7 @@ class Slider:
         self.y = (SCREEN_HEIGHT - self.height) // 2
         self.range_width = SCREEN_WIDTH - self.width
         self.position = 50
-        self.speed = 0.07
+        self.speed = 0.5
         self.direction = 1
         self.moving = True
 

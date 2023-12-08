@@ -7,7 +7,7 @@ class Power:
         self.name = name
         self.cost = cost
         self.damage = damage
-        self.image_name = Constants.POWER_IMAGE_NAME(name)
+        # self.image_name = Constants.POWER_IMAGE_NAME(name)
 
 class SpecialPower(Power):
   def __init__(self, name:str, cost:int, damage:int, x:int, y:int):

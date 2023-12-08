@@ -24,6 +24,7 @@ class Constants:
     # Colors
     GOLD = (253,165,0)
     MAROON = (147,32,37)
+    DARKERMAROON = (127, 12, 17)
     GREEN = (0,50,19)
     WHITE = (255,255,255)
     BLACK = (0,0,0)
@@ -46,8 +47,8 @@ class Constants:
     IMAGE_PATH = "cmsc-137-final-project/Assets/"
 
     # Font
-    # Architype Aubette Source: https://www.onlinewebfonts.com/download/26afb49b8b7dda2c10686589d6fc7b55
-    pygame.init()
-    ARCH32 = pygame.font.Font("Assets/Architype_Aubette.ttf", 32)
-    ARCH24 = pygame.font.Font("Assets/Architype_Aubette.ttf", 24)
-    ARCH20 = pygame.font.Font("Assets/Architype_Aubette.ttf", 20)
+    # # Architype Aubette Source: https://www.onlinewebfonts.com/download/26afb49b8b7dda2c10686589d6fc7b55
+    # pygame.init()
+    # ARCH32 = pygame.font.Font("Assets/Architype_Aubette.ttf", 32)
+    # ARCH24 = pygame.font.Font("Assets/Architype_Aubette.ttf", 24)
+    # ARCH20 = pygame.font.Font("Assets/Architype_Aubette.ttf", 20)

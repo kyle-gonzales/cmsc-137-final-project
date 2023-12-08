@@ -7,17 +7,14 @@ from player import Player
 
 
 class GameServer:
-    player_data = ""
-
-    connected_players_count = 0
-
-    game: GameState
-
-    game_stage = Constants.WAITING_FOR_PLAYERS
-
     def __init__(self) -> None:
         self.clients = []
-        
+
+        self.player_data = ""
+        self.connected_players_count = 0
+        self.game: GameState
+        self.game_stage = Constants.WAITING_FOR_PLAYERS
+
         self.server_socket = socket.socket(
             socket.AF_INET, socket.SOCK_STREAM
         )  # create socket
@@ -25,7 +22,6 @@ class GameServer:
         self.ADDRESS = (self.SERVER_IP, Constants.PORT)
 
         self.server_socket.bind(self.ADDRESS)
-
 
         print("SERVER INITIALIZED: Game created successfully...")
 

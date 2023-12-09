@@ -1,8 +1,8 @@
 import pygame
 
-class Constants:
 
-    APP_NAME ="Dutete vs Narcos: Dynasty War" # temp
+class Constants:
+    APP_NAME = "Dutete vs Narcos: Dynasty War"  # temp
 
     GAME_START = 0
     GAME_IN_PROGRESS = 1
@@ -16,19 +16,19 @@ class Constants:
     DISCONNECT_MESSAGE = "!DISCONNECT"
 
     HEADER_SIZE = 64
-    
+
     # Screen dimensions
     WIDTH = 960
     HEIGHT = 540
-    
+
     # Colors
-    GOLD = (253,165,0)
-    MAROON = (147,32,37)
+    GOLD = (253, 165, 0)
+    MAROON = (147, 32, 37)
     DARKERMAROON = (127, 12, 17)
-    GREEN = (0,50,19)
-    WHITE = (255,255,255)
-    BLACK = (0,0,0)
-    
+    GREEN = (0, 50, 19)
+    WHITE = (255, 255, 255)
+    BLACK = (0, 0, 0)
+
     # Power Images
     POWER_IMAGE_NAME = {
         "Guns & Roses": "GunsAndRoses.png",
@@ -41,10 +41,10 @@ class Constants:
         "Designer Shoes": "shoes.png",
         "Tuna Panga": "panga.png",
         "I See See": "iseesee.png",
-        "Bo Go": "bogo.png"
+        "Bo Go": "bogo.png",
     }
-    
-    IMAGE_PATH = "cmsc-137-final-project/Assets/"
+
+    IMAGE_PATH = "./Assets/"  # changed from "cmsc-137-final-project/Assets/"
 
     # Font
     # # Architype Aubette Source: https://www.onlinewebfonts.com/download/26afb49b8b7dda2c10686589d6fc7b55

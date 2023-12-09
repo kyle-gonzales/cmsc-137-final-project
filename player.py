@@ -1,146 +1,105 @@
 import pygame
-import math
+from power import Power
 from constants import Constants
-import random
-from projectile import Projectile
-from player import Player # you CANNOT import player because this file's name is player. 
 
-def display_special_powers():
-    for i in player.pspecial_powers: # (name, x, y)
-        # shine bg
-        shine = pygame.image.load("Assets/shine.png")
-        SCREEN.blit(shine, (i[1], i[2]))
-        # power icon
-        img = pygame.image.load("Assets/" + Constants.POWER_IMAGE_NAME[i[0]])
-        img = pygame.transform.scale(img, Constants.SPSIZE)
-        SCREEN.blit(img, (i[1]+20, i[2]+20))
-    for i in player.especial_powers:
-        # shine bg
-        poison = pygame.image.load("Assets/poison.png")
-        SCREEN.blit(poison, (i[1], i[2]))
-        # power icon
-        img = pygame.image.load("Assets/" + Constants.POWER_IMAGE_NAME[i[0]])
-        img = pygame.transform.scale(img, Constants.SPSIZE)
-        SCREEN.blit(img, (i[1]+20, i[2]+20))
+class Player:
+    def __init__(self, name:str, family:str):
+        self.name = name.upper()
+        self.family = family
+        self.corruption_points = 1000
+        self.fortress_health = 10000
+        self.basic_powers = []
+        self.special_powers = []
 
-def display_header():
-    # TODO: add name, health bar for both player and enemy
-    pname_text = Constants.FONT32.render(player.name, True, pactive_color)
-    ename_text = Constants.FONT32.render(player.ename, True, eactive_color)
-    ename_text_rect = ename_text.get_rect()
-    ename_text_rect.topright = (820,30)
-    SCREEN.blit(pname_text, (140, 30))
-    SCREEN.blit(ename_text, (675, 30))
+    def __str__(self):
+        return "name = {}\nfamily = {}\ncorruption points= {}\nfortress health = {}\nbasic powers = {}\nspecial powers = {}\n".format(
+            self.name,self.family,self.corruption_points,self.fortress_health, self.basic_powers, self.special_powers
+        )
 
-    # Avatar
-    pavatar = pygame.image.load("Assets/narcos_avatar.png") if player.family == Constants.NARCOS else pygame.image.load("Assets/dutete_avatar.png")
-    eavatar = pygame.image.load("Assets/dutete_avatar.png") if player.family == Constants.NARCOS else pygame.image.load("Assets/narcos_avatar.png")
-    pygame.draw.circle(SCREEN, pactive_color, (80,80), 50)
-    pygame.draw.circle(SCREEN, eactive_color, (880,80), 50)
-    SCREEN.blit(pavatar, (40,40))
-    SCREEN.blit(eavatar, (840,40))
-
-def display_health(current_health, isPlayer):
-    # Health bar
-    current_health_width = 200*current_health/10000
-    maxhealth_rect = pygame.Rect(140, 60, 200, 15) if isPlayer else pygame.Rect(620, 60, 200, 15)
-    current_health_rect = pygame.Rect(140, 60, current_health_width,15) if isPlayer else pygame.Rect(820 - current_health_width, 60, current_health_width, 15)
-    pygame.draw.rect(SCREEN, Constants.BLACK, maxhealth_rect)
-    pygame.draw.rect(SCREEN, pactive_color, current_health_rect) if isPlayer else pygame.draw.rect(SCREEN, eactive_color, current_health_rect)
-
-    # Health in numbers
-    phealth_text = Constants.FONT24.render(str(player.phealth), True, pactive_color)
-    ehealth_text = Constants.FONT24.render(str(player.ehealth).rjust(5), True, eactive_color)
-    SCREEN.blit(phealth_text, (140, 85))
-    SCREEN.blit(ehealth_text, (770, 85))
-
-
-SCREEN = pygame.display.set_mode((Constants.WIDTH,Constants.HEIGHT))
-pygame.display.set_caption(Constants.APP_NAME)
-clock = pygame.time.Clock()
-
-
-# TODO: GET name input and family from EYL's welcome screen
-dynasty = random.choice(["Dutete", "Narcos"])
-name = "Kathryn"
-
-# TODO: SEND name and dynasty to SERVER
-
-# Initialize player in client's side
-player = Player(name, dynasty)
-
-# TODO: GET enemy name from SERVER
-ename = "Daniel"
-
-# Initialize player's other attributes
-player.init_for_client(ename)
-player.init_special_powers_coordinates()
-player.update_phealth(10000)
-player.update_ehealth(10000)
-
-run = True # TODO: GET signal from SERVER that game starts
-
-isPlayer = 0 # For testing functions on both player and enemy sides
-
-while run: # Simulates taking turns between player and enemy
-    isPlayer += 1 # odd isPlayer: player's turn; even isPlayer: enemy's turn
-
-    # TODO: GET signal from SERVER that player should launch a power
-    launching = True
-
-    # TODO: GET force from GEL's slider
-    force = int(input("force: "))
-
-    # TODO: GET angle from EYL's cannon; verify if EYL uses deg or rad
-    angle = int(input("angle: ")) * math.pi / 180
-
-    # TODO: GET force from GEL's power menu
-    power = (random.choice(player.basic_powers)).name
-
-    # Initialize projectile; isPlayer = 1 means that projectile is launched from the player's side
-    projectile = Projectile(angle, force, power, isPlayer%2)
-    time = 0
-
-    # Active and passive colors of names
-    pactive_color = Constants.GREEN if isPlayer%2 else Constants.WHITE
-    eactive_color = Constants.WHITE if isPlayer%2 else Constants.MAROON
-
-    while launching:
-
-        # Display fortresses and background
-        SCREEN.blit(player.bg, (0,0))
-        SCREEN.blit(player.pfort_now, (0,0))
-        SCREEN.blit(player.efort_now, (0,0))
-
-        # Display names
-        display_header()
-
-        # Display special powers
-        display_special_powers()
-
-        # Display player and enemy
-        display_health(player.phealth, 1)
-        display_health(player.ehealth, 0)
-
-        isMidair = projectile.isMidAir(isPlayer%2)
-
-        if isMidair:
-            projectile.draw(SCREEN, clock)
-            time += 0.25
-            projectile.update(time)
+    def init_for_client(self, ename):
+        # p = player; e = enemy
+        self.ename = ename.upper()
+        # images, color
+        self.bg = pygame.image.load("Assets/NarcosBG.png") if self.family == Constants.NARCOS else pygame.image.load("Assets/DuteteBG.png")
+        self.pcolor = Constants.MAROON if self.family == Constants.NARCOS else Constants.GREEN
+        self.ecolor = Constants.GREEN if self.family == Constants.NARCOS else Constants.MAROON
+        if self.family == Constants.NARCOS:
+            self.pfort = [pygame.image.load("Assets/NarcosFortress.png"), 
+                    pygame.image.load("Assets/NarcosFortress75.png"),
+                    pygame.image.load("Assets/NarcosFortress50.png"),
+                    pygame.image.load("Assets/NarcosFortress25.png"),
+                    #pygame.image.load("Assets/NarcosFortress0.png")
+                    ] 
+            self.efort = [pygame.image.load("Assets/DuteteFortress.png"),
+                    pygame.image.load("Assets/DuteteFortress75.png"),
+                    pygame.image.load("Assets/DuteteFortress50.png"),
+                    pygame.image.load("Assets/DuteteFortress25.png"),
+                    #pygame.image.load("Assets/DuteteFortress0.png")
+                    ]
+            for i in range(len(self.efort)):
+                self.pfort[i] = pygame.transform.flip(self.pfort[i], True, False)
+                self.efort[i] = pygame.transform.flip(self.efort[i], True, False)
         else:
-            launching = False
+            self.pfort = [pygame.image.load("Assets/DuteteFortress.png"),
+                    pygame.image.load("Assets/DuteteFortress75.png"),
+                    pygame.image.load("Assets/DuteteFortress50.png"),
+                    pygame.image.load("Assets/DuteteFortress25.png"),
+                    #pygame.image.load("Assets/DuteteFortress0.png")
+                    ]
+            self.efort = [pygame.image.load("Assets/NarcosFortress.png"), 
+                    pygame.image.load("Assets/NarcosFortress75.png"),
+                    pygame.image.load("Assets/NarcosFortress50.png"),
+                    pygame.image.load("Assets/NarcosFortress25.png"),
+                    #pygame.image.load("Assets/NarcosFortress0.png")
+                    ]
+        self.pfort_now = self.pfort[0]
+        self.efort_now = self.efort[0]
+        # player powers
+        if self.family == Constants.DUTETE:
+          self.basic_powers = [
+              Power(name="Guns & Roses", cost=215, damage=1399),
+              Power(name="Drugs Race", cost=135, damage=859),
+              Power(name="P*t*ng *n*", cost=70, damage=459),
+              Power(name="Corruption", cost=0, damage=99)
+          ]
+          self.special_powers = [
+              Power(name="Swiss Miss Bank", cost=0, damage=1019),
+              Power(name="Debate Na Lang Kaya", cost=0, damage=1679)
+          ]
+        else: # Marcos
+          self.basic_powers = [
+              Power(name="Tank U", cost=245, damage=1599),
+              Power(name="Designer Shoes", cost=100, damage=619),
+              Power(name="Tuna Panga", cost=75, damage=479),
+              Power(name="Corruption", cost=0, damage=99)
+          ]
+          self.special_powers = [
+              Power(name="I See See", cost=0, damage=929),
+              Power(name="Bo Go", cost=0, damage=1769)
+          ]
+          
+    def update_phealth(self, phealth):
+        self.phealth = phealth
+        if self.phealth > 7500: self.pfort_now = self.pfort[0]
+        elif self.phealth > 5000: self.pfort_now = self.pfort[1]
+        elif self.phealth > 2500: self.pfort_now = self.pfort[2]
+        elif self.phealth > 0: self.pfort_now = self.pfort[3]
+        else: self.pfort_now = self.pfort[0]   ### TODO: add image
 
-        pygame.display.flip()
-
-
-    # Update healths after every turn
-    if isPlayer%2: player.update_ehealth(player.ehealth-1500)
-    else: player.update_phealth(player.phealth-1500)
-
-    pygame.display.flip()
-
-for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            quit()
+    def update_ehealth(self, ehealth):
+        self.ehealth = ehealth
+        if self.ehealth > 7500: self.efort_now = self.efort[0]
+        elif self.ehealth > 5000: self.efort_now = self.efort[1]
+        elif self.ehealth > 2500: self.efort_now = self.efort[2]
+        elif self.ehealth > 0: self.efort_now = self.efort[3]
+        else: self.efort_now = self.efort[0]   ### TODO: add image
+    
+    def init_special_powers_coordinates(self): 
+        self.pspecial_powers = [("I See See", Constants.SPX1, Constants.SPY2),
+                            ("Bo Go", Constants.SPX2, Constants.SPY1)] if self.family == "Narcos" else [
+                                ("Swiss Miss Bank", Constants.SPX1, Constants.SPY2),
+                                ("Debate Na Lang Kaya", Constants.SPX2, Constants.SPY1)]
+        self.especial_powers = [("Swiss Miss Bank", Constants.SPX1, Constants.SPY1),
+                            ("Debate Na Lang Kaya", Constants.SPX2, Constants.SPY2)] if self.family == "Narcos" else [
+                                ("I See See", Constants.SPX1, Constants.SPY1),
+                                ("Bo Go", Constants.SPX2, Constants.SPY2)]

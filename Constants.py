@@ -40,21 +40,34 @@ class Constants:
     # screens
     choose_family_screen = False
 
+    dutete_screen = False
+    narcos_screen = False
+
     # background for choose family
     choose_fam_bg = "Assets/choose_family_bg.png"
 
 
     # family bg
-    duterte_fam_bg = "Assets/dutete_info.png"
-    marcos_fam_bg = "Assets/marcos_info.png"
-
+    dutete_fam_bg = "Assets/dutete_info.png"
+    narcos_fam_bg = "Assets/narcos_info.png"
 
     # button paths
-    button_paths = ["Assets/duterte_button.png", "Assets/marcos_button.png"]
-    duterte_button_paths = ["Assets/duterte_button_hovered.png", "Assets/marcos_button.png"]
-    marcos_button_paths = ["Assets/duterte_button.png", "Assets/marcos_button_hovered.png"]
+    button_paths = ["Assets/dutete_button.png", "Assets/narcos_button.png"]
+    dutete_button_paths = ["Assets/dutete_button_hovered.png", "Assets/narcos_button.png"]
+    narcos_button_paths = ["Assets/dutete_button.png", "Assets/narcos_button_hovered.png"]
     button_width, button_height = 300, 85
     button_spacing = 20
+
+    # CONSTANTS FOR CANNON MOVEMENT
+    
+    #the screen of where the cannon is located?
+    game_proper_screen = False
+    family_name = ""
+
+    family_images = {
+    "Narcos": {"bg": "Assets/NarcosBG.png", "barrel": "Assets/narcos_cannon_barrel.png", "stand": "Assets/narcos_cannon_stand.png", "cannon": "Assets/dutete_cannon_zero.png"},
+    "Dutete": {"bg": "Assets/DuteteBG.png", "barrel": "Assets/dutete_cannon_barrel.png", "stand": "Assets/dutete_cannon_stand.png", "cannon": "Assets/narcos_cannon_zero.png"}
+    }
 
 
 

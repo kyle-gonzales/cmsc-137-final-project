@@ -5,6 +5,9 @@ from Constants import Constants
 from Background import Background
 from Button import Button
 from ChooseName import ChooseName
+from Cannon import Cannon
+from Movement import Movement
+from CannonMovement import CannonMovement
 
 pygame.init()
 
@@ -34,6 +37,9 @@ while True:
                         bg = Background(Constants.choose_fam_bg, Constants.screen)
                         Constants.choose_family_screen = True
                         Constants.choose_name_screen = False
+
+                        #player name
+                        print(Constants.input_text)
                     else:
                         print("User entered:", Constants.input_text)
                 elif event.key == pygame.K_BACKSPACE:
@@ -50,15 +56,62 @@ while True:
             #if in choose family screen
             if Constants.choose_family_screen:
                 if event.button == 1:  # Left mouse button
-                    if (button.is_clicked(event.pos)) == "Assets/duterte_button.png":
-                        button = Button(Constants.duterte_button_paths, Constants.button_width, Constants.button_height, Constants.button_spacing, Constants.screen)
-                        bg = Background(Constants.duterte_fam_bg, Constants.screen)
-                    elif (button.is_clicked(event.pos)) == "Assets/marcos_button.png":
-                        button = Button(Constants.marcos_button_paths, Constants.button_width, Constants.button_height, Constants.button_spacing, Constants.screen)
-                        bg = Background(Constants.marcos_fam_bg, Constants.screen)
+                    clicked_button_path = button.is_clicked(event.pos)
+
+                    if clicked_button_path == "Assets/dutete_button.png":
+                        # Reset the button and set background for Dutete screen
+                        button = Button(Constants.dutete_button_paths, Constants.button_width, Constants.button_height, Constants.button_spacing, Constants.screen)
+                        bg = Background(Constants.dutete_fam_bg, Constants.screen)
+                        Constants.dutete_screen = True
+                        Constants.narcos_screen = False 
+   
+                    #if dutete button is hovered it creates instantiation needed for the cannon movement
+                    elif clicked_button_path == "Assets/dutete_button_hovered.png":
+                        Constants.family_name = "Dutete"
+                        Constants.choose_family_screen = False
+                        Constants.dutete_screen = False
+                        Constants.game_proper_screen = True
+
+                        # Set background for Dutete family
+                        bg = Background(Constants.family_images[Constants.family_name]["bg"], Constants.screen)
+
+                        # Set images for Dutete family
+                        barrel_image = Cannon(Constants.family_images[Constants.family_name]["barrel"], 1.75)
+                        stand_image = Cannon(Constants.family_images[Constants.family_name]["stand"], 1.5)
+                        cannon_image = Cannon(Constants.family_images[Constants.family_name]["cannon"], 1.75)
+                        barrel_rotate = Movement(barrel_image.scale_image(), Constants.width, Constants.height)
+                        
+                    elif clicked_button_path == "Assets/narcos_button.png":
+                        # Reset the button and set background for Narcos screen
+                        button = Button(Constants.narcos_button_paths, Constants.button_width, Constants.button_height, Constants.button_spacing, Constants.screen)
+                        bg = Background(Constants.narcos_fam_bg, Constants.screen)
+                        Constants.narcos_screen = True
+                        Constants.dutete_screen = False
+                    
+                    #if narcos button is choses it creates instantiation needed for the cannon movement
+                    elif clicked_button_path == "Assets/narcos_button_hovered.png":
+                        Constants.family_name = "Narcos"
+                        Constants.choose_family_screen = False
+                        Constants.dutete_screen = False
+                        Constants.game_proper_screen = True
+
+                        # Set background for Narcos family
+                        bg = Background(Constants.family_images[Constants.family_name]["bg"], Constants.screen)
+
+                        # Set images for Narcos family
+                        barrel_image = Cannon(Constants.family_images[Constants.family_name]["barrel"], 1.75)
+                        stand_image = Cannon(Constants.family_images[Constants.family_name]["stand"], 1.5)
+                        cannon_image = Cannon(Constants.family_images[Constants.family_name]["cannon"], 1.75)
+                        barrel_rotate = Movement(barrel_image.scale_image(), Constants.width, Constants.height) 
+                            
+            elif Constants.game_proper_screen:
+                if event.button == 1:
+                    barrel_rotate.rotate = False
+                    rotation_angle = barrel_rotate.get_rotation_angle()
+                    print(rotation_angle)
 
         #from welcome screen to enter name screen
-        if pygame.time.get_ticks() - current_time >= 2000 and not Constants.choose_family_screen:
+        if pygame.time.get_ticks() - current_time >= 2000 and Constants.welcome_screen:
             Constants.choose_name_screen = True
             Constants.welcome_screen = False
 
@@ -75,6 +128,14 @@ while True:
     #draw buttons for choose family
     if Constants.choose_family_screen:
         button.draw(Constants.screen)
+    
+    if Constants.game_proper_screen:
+        if barrel_rotate.rotate:
+        #Rotate from 0 to 90: 90 to 0:
+            rotated_image, rotated_image_rect = barrel_rotate.rotate_barrel()
+
+        cannons = CannonMovement(rotated_image, rotated_image_rect, stand_image.scale_image(), cannon_image.flip_image(), Constants.width, Constants.height)
+        cannons.draw(Constants.screen)
 
     pygame.display.flip()
 

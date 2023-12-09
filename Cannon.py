@@ -1,5 +1,6 @@
 import pygame
 
+#load cannon images
 class Cannon:
     def __init__(self, image_path, scale):
         self.image_path = image_path

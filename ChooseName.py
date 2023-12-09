@@ -2,6 +2,7 @@ import pygame
 
 from Constants import *
 
+#used to display the choosen name
 class ChooseName:
     def __init__(self, width, height, max_characters, font, white, gray, dots, screen):
         self.width = width

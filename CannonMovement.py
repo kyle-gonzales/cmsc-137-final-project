@@ -1,3 +1,5 @@
+
+#for the rotation of the cannon's muzzle
 class CannonMovement:
     def __init__(self, rotated_barrel, rotated_barrel_rect, stand, cannon, screen_width, screen_height):
         self.rotated_barrel = rotated_barrel

@@ -1,6 +1,6 @@
 import pygame
-import sys
 
+#loads and displays background
 class Background:
     def __init__(self, bg_path, screen):
         self.bg_path = bg_path

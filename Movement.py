@@ -1,5 +1,6 @@
 import pygame
 
+#the barrel movement of the cannon
 class Movement:
     def __init__(self, barrel, screen_width, screen_height):
         self.barrel  = barrel

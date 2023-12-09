@@ -11,8 +11,6 @@ class Constants:
     welcome_screen = True
 
     #CHOOSE NAME CONSTANTS
-    #Choose Name Screen
-    choose_name_screen = False
 
     #background
     choose_name_bg = "Assets/choose_name_bg.png"
@@ -33,15 +31,9 @@ class Constants:
     font = pygame.font.SysFont("Courier", 50, "bold")
     prompt_text = font.render("Enter your name: ", True, (255, 255, 255))
     max_characters = 10
-    input_text = ""
     display_default_underscores = True
 
     #CHOOSE FAMILY CONSTANTS
-    # screens
-    choose_family_screen = False
-
-    dutete_screen = False
-    narcos_screen = False
 
     # background for choose family
     choose_fam_bg = "Assets/choose_family_bg.png"
@@ -59,14 +51,10 @@ class Constants:
     button_spacing = 20
 
     # CONSTANTS FOR CANNON MOVEMENT
-    
-    #the screen of where the cannon is located?
-    game_proper_screen = False
-    family_name = ""
 
     family_images = {
-    "Narcos": {"bg": "Assets/NarcosBG.png", "barrel": "Assets/narcos_cannon_barrel.png", "stand": "Assets/narcos_cannon_stand.png", "cannon": "Assets/dutete_cannon_zero.png"},
-    "Dutete": {"bg": "Assets/DuteteBG.png", "barrel": "Assets/dutete_cannon_barrel.png", "stand": "Assets/dutete_cannon_stand.png", "cannon": "Assets/narcos_cannon_zero.png"}
+    "Narcos": {"bg": "Assets/NarcosBG.png", "barrel": "Assets/narcos_cannon_barrel.png", "stand": "Assets/narcos_cannon_stand.png", "cannon": "Assets/dutete_cannon_zero.png", "state" : "False"},
+    "Dutete": {"bg": "Assets/DuteteBG.png", "barrel": "Assets/dutete_cannon_barrel.png", "stand": "Assets/dutete_cannon_stand.png", "cannon": "Assets/narcos_cannon_zero.png", "state" : "False"}
     }
 
 

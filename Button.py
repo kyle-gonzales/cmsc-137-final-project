@@ -1,6 +1,6 @@
 import pygame
-import sys
 
+#creates button for the choose family screen
 class Button:
     def __init__(self, paths, width, height, space, screen):
         self.listImagePaths = paths

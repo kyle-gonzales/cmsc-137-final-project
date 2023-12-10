@@ -45,17 +45,6 @@ class WelcomeScreenHandler:
             Constants.screen,
         )
 
-    def start_connect(self):
-        # if connected to server: assumes true for now
-        connected = True
-        if connected:
-            self.bg = Background(Constants.choose_name_bg, Constants.screen)
-            pass
-        else:
-            connected = False
-
-        return connected
-
     # returns the player name if not empty
     def enter_name(self):
         if self.player_name != "":

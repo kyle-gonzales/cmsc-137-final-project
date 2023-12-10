@@ -11,7 +11,7 @@ class GameState:
     players = dict()  # player_name (string): player_instance (Player)
 
     def update(self, name: str, player: Player):
-        self.players[player.id] = player
+        self.players[name] = player
 
     def __str__(self) -> str:
         output = ""

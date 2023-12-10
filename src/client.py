@@ -19,6 +19,9 @@ class Client:
 
     server = "192.168.1.25"  # paste the IP of the server here
 
+    is_player_one = False
+    player_name = ""  # ! player names should be unique
+
     def __init__(self):
         self.connected = False
         self.server_connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -27,10 +30,8 @@ class Client:
     def connect(self):
         self.server_connection.connect(self.SERVER_ADDRESS)
         self.server_connection.settimeout(0.1)
-
-        self.color = input("choose color [255,255,255]: ")  # temp; player info
-        self.send(f"CONNECT " + self.color)  # replace color with player info
-        self.color = [int(channel) for channel in self.color.split(",")]
+        self.send(f"TRY_CONNECT")  # replace color with player info
+        # self.color = [int(channel) for channel in self.color.split(",")]
 
     def send(self, package: str):
         message = package.encode(
@@ -90,6 +91,7 @@ class Client:
                 if event.type == pygame.QUIT:
                     self.send(Constants.DISCONNECT_MESSAGE)
                     is_running = False
+                    self.connected = False
 
                 keys = pygame.key.get_pressed()
                 if keys[pygame.K_a]:
@@ -136,28 +138,75 @@ class Client:
         is_running = True
 
         while is_running:
+            message = ""
+            """
+                Try to Accept Message
+            """
+            try:
+                message = self.receive_message()
+            except Exception as e:
+                # print(e)
+                pass
+
+            """
+                Handle Message
+            """
+            if stage_screen == "Welcome Screen":
+                if "CONNECTED_PLAYER_ONE" in message:
+                    stage_screen = "Enter Name Screen"
+                    self.connected = True
+                    self.is_player_one = True
+                    print("i am player 1")
+                    # TODO: ENABLE CHARACTER SELECTION FLAG
+
+                elif "CONNECTED_PLAYER_TWO" in message:
+                    stage_screen = "Enter Name Screen"
+                    self.connected = True
+                    print("i am player 2")
+
+                elif "TRY_CONNECT_FAILED" in message:
+                    print("failed to connect to the server")
+            elif stage_screen == "Enter Name Screen":
+                if message.startswith("CONNECTED"):
+                    stage_screen = "Choose Family Screen"
+
+            elif stage_screen == "Choose Family Screen":
+                if message.startswith("PLAYER"):
+                    players = message.split(";")
+
+                    for player_info in players:
+                        name, family = player_info.split("|")[1:]
+
+                        if name == self.player_name:
+                            chosen_family = family
+                        else:
+                            chosen_family = "Dutete" if family == "Narcos" else "Narcos"
+                    print(f"you are in FAMILY: {chosen_family}")
+                    stage_screen = "Game Proper Screen"
+
+            """
+                Handle Events
+            """
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
+                    self.send(Constants.DISCONNECT_MESSAGE)
                     is_running = False
+                    self.connected = False
                     pygame.quit()
                     sys.exit()
 
                 if stage_screen == "Welcome Screen":
                     if event.type == pygame.MOUSEBUTTONDOWN:
-                        if event.button == 1:
-                            # tries to connect to the server
-                            connected = game.start_connect()
-                            if connected:
-                                stage_screen = "Enter Name Screen"
-                            # if not connected, stays on the welcome screen
-                            else:
-                                pass
+                        if event.button == 1 and not self.connected:
+                            # try to connect to the server
+                            self.connect()
 
                 elif stage_screen == "Enter Name Screen":
                     if event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_RETURN:
-                            player_name = game.enter_name()
-                            stage_screen = "Choose Family Screen"
+                            self.player_name = game.enter_name()
+                            print(self.player_name)
+                            self.send(f"CONNECT|{self.player_name}")
                         elif event.key == pygame.K_BACKSPACE:
                             game.remove_character()
                         else:
@@ -166,9 +215,14 @@ class Client:
                 elif stage_screen == "Choose Family Screen":
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         if event.button == 1:
-                            chosen_family = game.choose_family(event)
-                            if chosen_family != "":
-                                stage_screen = "Game Proper Screen"
+                            if self.is_player_one:
+                                chosen_family = game.choose_family(event)
+                                if chosen_family != "":
+                                    self.send(
+                                        f"FAMILY1|{self.player_name}|{chosen_family}"
+                                    )
+                            else:
+                                print("waiting for player 1 to select the family")
 
                 elif stage_screen == "Game Proper Screen":
                     if event.type == pygame.MOUSEBUTTONDOWN:
@@ -176,14 +230,16 @@ class Client:
                             angle = game.get_angle()
                             print(angle)
 
+            """
+                Update Display
+            """
+
             game.display_background()
 
             if stage_screen == "Enter Name Screen":
                 game.display_name()
-
             if stage_screen == "Choose Family Screen":
                 game.draw_buttons()
-
             if stage_screen == "Game Proper Screen":
                 game.display_cannon()
 
@@ -192,11 +248,6 @@ class Client:
 
     def winning_screen(self):
         pass
-
-    def family_selection_screen(self):
-        pass
-
-    # create event handlers
 
 
 c = Client()

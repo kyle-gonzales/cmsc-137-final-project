@@ -54,32 +54,44 @@ class GameServer:
                 print(f"MESSAGE RECEIVED FROM [{address}]: {message}")
 
                 if self.game_stage == Constants.WAITING_FOR_PLAYERS:
-                    if message.startswith("CONNECT"):
-                        rgb = tuple(
-                            [
-                                int(channel.strip())
-                                for channel in message.split()[1].split(",")
-                            ]
-                        )
-                        player = Player(rgb, 100)
-                        self.game.update("", player)
+                    if message.startswith("TRY_CONNECT"):
+                        if self.connected_players_count >= 2:
+                            self.send(client_connection, "TRY_CONNECT_FAILED")
+                        else:
+                            self.connected_players_count += 1
 
-                        self.broadcast("CONNECTED " + str(rgb))
-                        self.connected_players_count += 1
-                        print(self.connected_players_count)
-
+                            if self.connected_players_count == 1:
+                                self.send(client_connection, "CONNECTED_PLAYER_ONE")
+                            else:
+                                self.send(client_connection, "CONNECTED_PLAYER_TWO")
+                    elif message.startswith("CONNECT"):
+                        name = message.split("|")[1]
+                        player = Player(name)
+                        self.game.update(name, player)
+                        self.broadcast("CONNECTED " + str(name))
                         if self.connected_players_count == 2:
                             self.game_stage = Constants.GAME_START
                     else:
                         self.broadcast(  # for testing
-                            "waiting for players, but message is NOT 'CONNECT'"
+                            "cannot select family until player 2 connects..."
                         )
 
                 elif self.game_stage == Constants.GAME_START:
-                    print(
-                        "GAME START. Both players are connected and the game is starting"
-                    )
-                    self.broadcast("Game is starting")
+                    if message.startswith("FAMILY"):
+                        name, family = message.split("|")[1:]
+
+                        for n, player in self.game.players.items():
+                            if name == n:
+                                player.family = family
+                            else:
+                                player.family = "Dutete" if family == "Narcos" else "Narcos"
+                                # choose the family opposite to the selected family
+                                
+                            self.game.update(name, player)
+
+
+                        # TODO: UPDATE THE FAMILY FOR THE OTHER PLAYER
+                        self.broadcast(str(self.game))
                     self.game_stage = Constants.GAME_IN_PROGRESS
 
                 elif self.game_stage == Constants.GAME_IN_PROGRESS:

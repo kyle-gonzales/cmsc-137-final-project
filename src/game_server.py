@@ -1,9 +1,11 @@
 import socket
 import threading
+import traceback
 
 from constants import Constants
 from game_state import GameState
 from player import Player
+from util import *
 
 
 class GameServer:
@@ -12,7 +14,7 @@ class GameServer:
 
         self.player_data = ""
         self.connected_players_count = 0
-        self.game: GameState
+        self.game: GameState = GameState()
         self.game_stage = Constants.WAITING_FOR_PLAYERS
 
         self.server_socket = socket.socket(
@@ -26,9 +28,9 @@ class GameServer:
         print("SERVER INITIALIZED: Game created successfully...")
 
     def handle_client(self, client_connection, address):
-        connected = True
+        is_running = True
 
-        while connected:
+        while is_running:
             try:
                 message_length = client_connection.recv(Constants.HEADER_SIZE).decode(
                     Constants.FORMAT
@@ -45,19 +47,58 @@ class GameServer:
                 )
 
                 if message == Constants.DISCONNECT_MESSAGE:
-                    connected = False
-                    # TODO: remove clients that are disconnected
+                    is_running = False
+                    self.clients.remove(client_connection)
+                    self.connected_players_count -= 1
 
-                print(
-                    f"MESSAGE RECEIVED FROM [{address}]: {message}"
-                )  # TODO: handle message based on game state
+                print(f"MESSAGE RECEIVED FROM [{address}]: {message}")
 
                 if self.game_stage == Constants.WAITING_FOR_PLAYERS:
-                    pass
+                    if message.startswith("CONNECT"):
+                        rgb = tuple(
+                            [
+                                int(channel.strip())
+                                for channel in message.split()[1].split(",")
+                            ]
+                        )
+                        player = Player(rgb, 100)
+                        self.game.update("", player)
+
+                        self.broadcast("CONNECTED " + str(rgb))
+                        self.connected_players_count += 1
+                        print(self.connected_players_count)
+
+                        if self.connected_players_count == 2:
+                            self.game_stage = Constants.GAME_START
+                    else:
+                        self.broadcast( # for testing
+                            "waiting for players, but message is NOT 'CONNECT'"
+                        )
+
                 elif self.game_stage == Constants.GAME_START:
-                    pass
+                    print(
+                        "GAME START. Both players are connected and the game is starting"
+                    )
+                    self.broadcast("Game is starting")
+                    self.game_stage = Constants.GAME_IN_PROGRESS
+
                 elif self.game_stage == Constants.GAME_IN_PROGRESS:
-                    pass
+                    if message.startswith("PLAYER"):
+                        _, player_id, x = message.split("-")
+
+                        player_id = tuple([int(x) for x in player_id.split(",")])  # rgb
+
+                        # Todo update the game state
+
+                        player: Player = self.game.players.get(player_id)
+                        player.x = x
+
+                        self.game.update("", player)
+
+                        # broadcast the game state to all players
+
+                        self.broadcast(str(self.game))
+
                 elif self.game_stage == Constants.GAME_END:
                     pass
                 else:
@@ -65,7 +106,8 @@ class GameServer:
                         f"INVALID GAME STAGE: '{self.game_stage}' is not a valid game stage"
                     )
 
-            except:
+            except Exception as e:
+                print(traceback.format_exc())
                 pass
 
         client_connection.close()
@@ -92,11 +134,9 @@ class GameServer:
 
             self.clients.append(client_connection)
 
-            """
-            print(
-                f"\nACTIVE CONNECTIONS: {threading.active_count() - 1}"
-            )  # how many threads (clients) are active in this process
-            """
+            # print(
+            #     f"\nACTIVE CONNECTIONS: {threading.active_count() - 1}"
+            # )  # how many threads (clients) are active in this process
 
     def broadcast(
         self, package: str
@@ -122,4 +162,3 @@ class GameServer:
 
         client.send(header)
         client.send(message)
-        # print("message sent")

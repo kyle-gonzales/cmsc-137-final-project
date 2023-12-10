@@ -71,7 +71,7 @@ class GameServer:
                         if self.connected_players_count == 2:
                             self.game_stage = Constants.GAME_START
                     else:
-                        self.broadcast( # for testing
+                        self.broadcast(  # for testing
                             "waiting for players, but message is NOT 'CONNECT'"
                         )
 

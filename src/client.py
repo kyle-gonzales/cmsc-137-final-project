@@ -5,11 +5,13 @@ import pygame
 
 from constants import Constants
 from util import *
+from WelcomeScreenHandler import WelcomeScreenHandler
 
+pygame.init()
 pygame.font.init()
 
-WIDTH, HEIGHT = 750, 750
-WIN = pygame.display.set_mode((WIDTH, HEIGHT))
+# WIDTH, HEIGHT = 750, 750
+# WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 
 
 class Client:
@@ -26,8 +28,8 @@ class Client:
         self.server_connection.connect(self.SERVER_ADDRESS)
         self.server_connection.settimeout(0.1)
 
-        self.color = input("choose color [255,255,255]: ") # temp; player info
-        self.send(f"CONNECT " + self.color) # replace color with player info
+        self.color = input("choose color [255,255,255]: ")  # temp; player info
+        self.send(f"CONNECT " + self.color)  # replace color with player info
         self.color = [int(channel) for channel in self.color.split(",")]
 
     def send(self, package: str):
@@ -49,9 +51,7 @@ class Client:
         self.server_connection.send(message)
 
     def receive_message(self):
-        message_length = self.server_connection.recv(
-            Constants.HEADER_SIZE
-        ).decode(
+        message_length = self.server_connection.recv(Constants.HEADER_SIZE).decode(
             Constants.FORMAT
         )  # blocks thread until message is received. decode byte stream with UTF-8.
 
@@ -104,7 +104,7 @@ class Client:
                 self.connected = True
 
             elif self.connected:
-                WIN.fill((0, 0, 0))
+                # WIN.fill((0, 0, 0))
 
                 ##
                 if message.startswith("PLAYER"):
@@ -112,7 +112,9 @@ class Client:
                     for player in players:
                         _, color, new_x = player.split("-")
                         color = [int(channel.strip()) for channel in color.split(",")]
-                        pygame.draw.rect(WIN, tuple(color), (int(new_x), 100, 50, 50))
+                        pygame.draw.rect(
+                            Constants.screen, tuple(color), (int(new_x), 100, 50, 50)
+                        )
 
                     # Update the display
                     pygame.display.flip()
@@ -124,7 +126,69 @@ class Client:
         sys.exit()
 
     def welcome_screen(self):
-        pass
+        # game loop
+        clock = pygame.time.Clock()
+
+        game = WelcomeScreenHandler()
+        choosen_family = ""
+
+        stage_screen = "Welcome Screen"
+        is_running = True
+
+        while is_running:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    is_running = False
+                    pygame.quit()
+                    sys.exit()
+
+                if stage_screen == "Welcome Screen":
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        if event.button == 1:
+                            # tries to connect to the server
+                            connected = game.start_connect()
+                            if connected:
+                                stage_screen = "Enter Name Screen"
+                            # if not connected, stays on the welcome screen
+                            else:
+                                pass
+
+                elif stage_screen == "Enter Name Screen":
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_RETURN:
+                            player_name = game.enter_name()
+                            stage_screen = "Choose Family Screen"
+                        elif event.key == pygame.K_BACKSPACE:
+                            game.remove_character()
+                        else:
+                            game.add_character(event)
+
+                elif stage_screen == "Choose Family Screen":
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        if event.button == 1:
+                            chosen_family = game.choose_family(event)
+                            if chosen_family != "":
+                                stage_screen = "Game Proper Screen"
+
+                elif stage_screen == "Game Proper Screen":
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        if event.button == 1:
+                            angle = game.get_angle()
+                            print(angle)
+
+            game.display_background()
+
+            if stage_screen == "Enter Name Screen":
+                game.display_name()
+
+            if stage_screen == "Choose Family Screen":
+                game.draw_buttons()
+
+            if stage_screen == "Game Proper Screen":
+                game.display_cannon()
+
+            pygame.display.flip()
+            pygame.time.Clock().tick(60)
 
     def winning_screen(self):
         pass
@@ -136,4 +200,4 @@ class Client:
 
 
 c = Client()
-c.main_game()
+c.welcome_screen()

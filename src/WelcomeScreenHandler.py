@@ -44,6 +44,10 @@ class WelcomeScreenHandler:
             Constants.button_spacing,
             Constants.screen,
         )
+    
+    def connected(self):
+        self.bg = Background(Constants.choose_name_bg, Constants.screen)
+
 
     # returns the player name if not empty
     def enter_name(self):
@@ -104,6 +108,10 @@ class WelcomeScreenHandler:
             self.create_family_instance(self.family_name)
 
         return self.family_name
+
+    def player_two_family(self, chosen_family):
+        self.family_name = chosen_family
+        self.create_family_instance(self.family_name)
 
     # create cannon object instance for the chosen family
     def create_family_instance(self, family_name):

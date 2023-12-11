@@ -6,6 +6,7 @@ import pygame
 from constants import Constants
 from util import *
 from WelcomeScreenHandler import WelcomeScreenHandler
+from GameProperHandler import GameProperHandler
 
 pygame.init()
 pygame.font.init()
@@ -17,10 +18,11 @@ pygame.font.init()
 class Client:
     # player info
 
-    server = "192.168.1.25"  # paste the IP of the server here
+    server = "192.168.0.108"  # paste the IP of the server here
 
     is_player_one = False
     player_name = ""  # ! player names should be unique
+    chosen_family = ""
 
     def __init__(self):
         self.connected = False
@@ -129,7 +131,6 @@ class Client:
 
     def welcome_screen(self):
         game = WelcomeScreenHandler()
-        chosen_family = ""
 
         stage_screen = "Welcome Screen"
         is_running = True
@@ -179,10 +180,10 @@ class Client:
                         name, family = player_info.split("|")[1:]
 
                         if name == self.player_name:
-                            chosen_family = family
+                            self.chosen_family = family
                         else:
-                            chosen_family = "Dutete" if family == "Narcos" else "Narcos"
-                    print(f"you are in FAMILY: {chosen_family}")
+                            self.chosen_family = "Dutete" if family == "Narcos" else "Narcos"
+                    print(f"you are in FAMILY: {self.chosen_family}")
                 # removed the stage_screen = game proper
 
             """
@@ -223,26 +224,21 @@ class Client:
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         if event.button == 1:
                             if self.is_player_one:
-                                chosen_family = game.choose_family(event)
-                                if chosen_family != "":
+                                self.chosen_family = game.choose_family(event)
+                                #will also call the game proper screen to initialize the cannons
+                                if self.chosen_family != "":
                                     self.send(
-                                        f"FAMILY1|{self.player_name}|{chosen_family}"
+                                        f"FAMILY1|{self.player_name}|{self.chosen_family}"
                                     )
-                                    stage_screen = "Game Proper Screen"
+                                    self.game_proper_screen()
 
                             else:
                                 print("waiting for player 1 to select the family")
 
                     if not self.is_player_one:
-                        if chosen_family != "":
-                            game.player_two_family(chosen_family)
+                        if self.chosen_family != "":
                             stage_screen = "Game Proper Screen"
-
-                elif stage_screen == "Game Proper Screen":
-                    if event.type == pygame.MOUSEBUTTONDOWN:
-                        if event.button == 1:
-                            angle = game.get_angle()
-                            print(angle)
+                            self.game_proper_screen()
 
             """
                 Update Display
@@ -254,8 +250,58 @@ class Client:
                 game.display_name()
             if stage_screen == "Choose Family Screen":
                 game.draw_buttons()
-            if stage_screen == "Game Proper Screen":
-                game.display_cannon()
+
+            pygame.display.flip()
+            pygame.time.Clock().tick(60)
+    
+    def game_proper_screen(self):
+        gameProper = GameProperHandler()
+        stage_screen = "Game Proper Screen"
+
+        is_running = True
+
+        #create cannon instance
+        gameProper.create_cannon_instance(self.chosen_family)
+
+        while is_running:
+            message = ""
+            """
+                Try to Accept Message
+            """
+            try:
+                message = self.receive_message()
+            except Exception as e:
+                # print(e)
+                pass
+
+            """
+                Handle Message
+
+            """
+
+            """
+                Handle Events
+            """
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.send(Constants.DISCONNECT_MESSAGE)
+                    is_running = False
+                    self.connected = False
+                    pygame.quit()
+                    sys.exit()
+
+                if stage_screen == "Game Proper Screen":
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        if event.button == 1:
+                            angle = gameProper.get_angle() #get angle
+                            print(angle)
+
+            """
+                Update Display
+            """
+
+            gameProper.display_background()
+            gameProper.display_cannon()
 
             pygame.display.flip()
             pygame.time.Clock().tick(60)

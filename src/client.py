@@ -165,7 +165,8 @@ class Client:
                     print("i am player 2")
 
                 elif "TRY_CONNECT_FAILED" in message:
-                    print("failed to connect to the server")
+                    print("too many players on server. disconnecting...")
+                    self.send(Constants.DISCONNECT_MESSAGE)
             elif stage_screen == "Enter Name Screen":
                 if message.startswith("CONNECTED"):
                     stage_screen = "Choose Family Screen"

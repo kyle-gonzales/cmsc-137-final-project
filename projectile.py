@@ -36,8 +36,11 @@ class Projectile():
         self.x = Constants.PXi + self.vix * time if self.isPlayer else Constants.EXi + self.vix * time
         self.y = Constants.Yi - (self.viy * time - 5*(time ** 2))
     
-    def isMidAir(self, isPlayer):
+    def hits(self, isPlayer):
+        # midair
         if self.y <= Constants.Yi and (
             (self.x <= Constants.WIDTH + 100 and isPlayer) 
             or (self.x >= -100 and not(isPlayer))
-            ): return True
+            ): return "no"
+        # return name of special power if it hits special power; 
+        # return "fortress" if it hits fortress of enemy; stop projectile

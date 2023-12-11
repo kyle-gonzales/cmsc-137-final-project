@@ -122,21 +122,24 @@ while run: # Simulates taking turns between player and enemy
         display_health(player.phealth, 1)
         display_health(player.ehealth, 0)
 
-        isMidair = projectile.isMidAir(isPlayer%2)
+        hits = projectile.hits(isPlayer%2)
 
-        if isMidair:
+        if hits == "no":
             projectile.draw(SCREEN, clock)
             time += 0.25
             projectile.update(time)
-        else:
+        elif hits in player.pspecial_powers and isPlayer: # remove power but dont stop projectile
+            player.pspecial_powers.remove(hits) 
+        elif hits in player.especial_powers and not(isPlayer): # remove power but dont stop projectile
+            player.especial_powers.remove(hits) 
+        elif hits == "fortress" # update health and stop projectile
+            if isPlayer%2: player.update_ehealth(player.ehealth-1500) # TODO: replace 1500 with power damage
+            else: player.update_phealth(player.phealth-1500)
             launching = False
 
         pygame.display.flip()
 
 
-    # Update healths after every turn
-    if isPlayer%2: player.update_ehealth(player.ehealth-1500)
-    else: player.update_phealth(player.phealth-1500)
 
     pygame.display.flip()
 

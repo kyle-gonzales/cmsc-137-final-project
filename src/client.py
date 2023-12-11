@@ -17,7 +17,7 @@ pygame.font.init()
 class Client:
     # player info
 
-    server = "192.168.1.25"  # paste the IP of the server here
+    server = "192.168.0.108"  # paste the IP of the server here
 
     is_player_one = False
     player_name = ""  # ! player names should be unique
@@ -128,11 +128,9 @@ class Client:
         sys.exit()
 
     def welcome_screen(self):
-        # game loop
-        clock = pygame.time.Clock()
 
         game = WelcomeScreenHandler()
-        choosen_family = ""
+        chosen_family = ""
 
         stage_screen = "Welcome Screen"
         is_running = True
@@ -151,16 +149,18 @@ class Client:
             """
                 Handle Message
             """
+
+            #if stage_screen is initialized here, the handle events will execute the next screen
             if stage_screen == "Welcome Screen":
                 if "CONNECTED_PLAYER_ONE" in message:
-                    stage_screen = "Enter Name Screen"
+                    #stage_screen = "Enter Name Screen"
                     self.connected = True
                     self.is_player_one = True
                     print("i am player 1")
                     # TODO: ENABLE CHARACTER SELECTION FLAG
 
                 elif "CONNECTED_PLAYER_TWO" in message:
-                    stage_screen = "Enter Name Screen"
+                    #stage_screen = "Enter Name Screen"
                     self.connected = True
                     print("i am player 2")
 
@@ -169,7 +169,8 @@ class Client:
                     self.send(Constants.DISCONNECT_MESSAGE)
             elif stage_screen == "Enter Name Screen":
                 if message.startswith("CONNECTED"):
-                    stage_screen = "Choose Family Screen"
+                    pass
+                    #stage_screen = "Choose Family Screen"
 
             elif stage_screen == "Choose Family Screen":
                 if message.startswith("PLAYER"):
@@ -183,7 +184,8 @@ class Client:
                         else:
                             chosen_family = "Dutete" if family == "Narcos" else "Narcos"
                     print(f"you are in FAMILY: {chosen_family}")
-                    stage_screen = "Game Proper Screen"
+                #removed the stage_screen = game proper 
+
 
             """
                 Handle Events
@@ -198,9 +200,13 @@ class Client:
 
                 if stage_screen == "Welcome Screen":
                     if event.type == pygame.MOUSEBUTTONDOWN:
-                        if event.button == 1 and not self.connected:
-                            # try to connect to the server
-                            self.connect()
+                        if event.button == 1:
+                            #if connected proceed to enter name screen
+                            if self.connected:
+                                game.connected()
+                                stage_screen = "Enter Name Screen"
+                            else:
+                                self.connect()
 
                 elif stage_screen == "Enter Name Screen":
                     if event.type == pygame.KEYDOWN:
@@ -208,6 +214,8 @@ class Client:
                             self.player_name = game.enter_name()
                             print(self.player_name)
                             self.send(f"CONNECT|{self.player_name}")
+
+                            stage_screen = "Choose Family Screen"
                         elif event.key == pygame.K_BACKSPACE:
                             game.remove_character()
                         else:
@@ -222,8 +230,15 @@ class Client:
                                     self.send(
                                         f"FAMILY1|{self.player_name}|{chosen_family}"
                                     )
+                                    stage_screen = "Game Proper Screen"
+
                             else:
                                 print("waiting for player 1 to select the family")
+                    
+                    if not self.is_player_one:
+                        if chosen_family != "":
+                            game.player_two_family(chosen_family)
+                            stage_screen = "Game Proper Screen"
 
                 elif stage_screen == "Game Proper Screen":
                     if event.type == pygame.MOUSEBUTTONDOWN:

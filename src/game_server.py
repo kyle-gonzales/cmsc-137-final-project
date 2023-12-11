@@ -64,6 +64,7 @@ class GameServer:
                                 self.send(client_connection, "CONNECTED_PLAYER_ONE")
                             else:
                                 self.send(client_connection, "CONNECTED_PLAYER_TWO")
+                                
                     elif message.startswith("CONNECT"):
                         name = message.split("|")[1]
                         player = Player(name)

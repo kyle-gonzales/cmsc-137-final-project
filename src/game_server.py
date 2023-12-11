@@ -64,7 +64,7 @@ class GameServer:
                                 self.send(client_connection, "CONNECTED_PLAYER_ONE")
                             else:
                                 self.send(client_connection, "CONNECTED_PLAYER_TWO")
-                                
+
                     elif message.startswith("CONNECT"):
                         name = message.split("|")[1]
                         player = Player(name)
@@ -87,9 +87,7 @@ class GameServer:
                             else:
                                 player.family = "Dutete" if family == "Narcos" else "Narcos"
                                 # choose the family opposite to the selected family
-                                
-                            self.game.update(name, player)
-
+                            self.game.update(n, player)
 
                         # TODO: UPDATE THE FAMILY FOR THE OTHER PLAYER
                         self.broadcast(str(self.game))

@@ -132,7 +132,7 @@ while run: # Simulates taking turns between player and enemy
             player.pspecial_powers.remove(hits) 
         elif hits in player.especial_powers and not(isPlayer): # remove power but dont stop projectile
             player.especial_powers.remove(hits) 
-        elif hits == "fortress" # update health and stop projectile
+        elif hits == "fortress": # update health and stop projectile
             if isPlayer%2: player.update_ehealth(player.ehealth-1500) # TODO: replace 1500 with power damage
             else: player.update_phealth(player.phealth-1500)
             launching = False

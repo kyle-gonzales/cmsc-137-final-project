@@ -54,6 +54,10 @@ def display_health(current_health, isPlayer):
     SCREEN.blit(phealth_text, (140, 85))
     SCREEN.blit(ehealth_text, (770, 85))
 
+def index_sp(power, special_powers):
+    for i in range(len(special_powers)):
+        if special_powers[i][0] == power: return i
+    return -1
 
 SCREEN = pygame.display.set_mode((Constants.WIDTH,Constants.HEIGHT))
 pygame.display.set_caption(Constants.APP_NAME)
@@ -121,25 +125,29 @@ while run: # Simulates taking turns between player and enemy
         # Display player and enemy
         display_health(player.phealth, 1)
         display_health(player.ehealth, 0)
-
-        hits = projectile.hits(isPlayer%2)
-
-        if hits == "no":
+        
+        hits = projectile.hits(1, player.pspecial_powers, SCREEN) if isPlayer%2 else projectile.hits(0, player.especial_powers, SCREEN)
+        print(hits)
+        
+        if hits == "miss":
+            # TODO: display "miss"
+            launching = False
+        elif hits == "fortress": # update health and stop projectile
+            # TODO: display power damage
+            if isPlayer%2:
+                player.update_ehealth(player.ehealth-1500) # TODO: replace 1500 with power damage
+            else:
+                player.update_phealth(player.phealth-1500)
+            launching = False
+        else:
+            if index_sp(hits, player.pspecial_powers) != -1: # remove power but dont stop projectile
+                print(player.pspecial_powers.pop(index_sp(hits, player.pspecial_powers))) 
+            elif index_sp(hits, player.especial_powers) != -1: # remove power but dont stop projectile
+                print(player.especial_powers.pop(index_sp(hits, player.especial_powers))) 
             projectile.draw(SCREEN, clock)
             time += 0.25
             projectile.update(time)
-        elif hits in player.pspecial_powers and isPlayer: # remove power but dont stop projectile
-            player.pspecial_powers.remove(hits) 
-        elif hits in player.especial_powers and not(isPlayer): # remove power but dont stop projectile
-            player.especial_powers.remove(hits) 
-        elif hits == "fortress": # update health and stop projectile
-            if isPlayer%2: player.update_ehealth(player.ehealth-1500) # TODO: replace 1500 with power damage
-            else: player.update_phealth(player.phealth-1500)
-            launching = False
-
         pygame.display.flip()
-
-
 
     pygame.display.flip()
 

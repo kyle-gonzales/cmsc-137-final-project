@@ -36,11 +36,21 @@ class Projectile():
         self.x = Constants.PXi + self.vix * time if self.isPlayer else Constants.EXi + self.vix * time
         self.y = Constants.Yi - (self.viy * time - 5*(time ** 2))
     
-    def hits(self, isPlayer):
-        # midair
+    def hits(self, isPlayer, special_powers, SCREEN):
+    # midair
+        projectile_rect = pygame.Rect(self.x, self.y, 80, 80)
+        
+        for i in special_powers:
+            special_power_rect = pygame.Rect(i[1], i[2], 90, 90)
+            if projectile_rect.colliderect(special_power_rect):
+                return i[0]
+            
+        fortress_rect = pygame.Rect(700, 270, 260, 240) if isPlayer else pygame.Rect(0, 270, 260, 240)
+        if projectile_rect.colliderect(fortress_rect): return "fortress"
+        
         if self.y <= Constants.Yi and (
             (self.x <= Constants.WIDTH + 100 and isPlayer) 
             or (self.x >= -100 and not(isPlayer))
-            ): return "no"
-        # return name of special power if it hits special power; 
-        # return "fortress" if it hits fortress of enemy; stop projectile
+            ): return "midair"
+        
+        else: return "miss"

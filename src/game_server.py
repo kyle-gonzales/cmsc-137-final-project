@@ -47,6 +47,8 @@ class GameServer:
                     Constants.FORMAT
                 )
 
+                print(message)
+
                 if message == Constants.DISCONNECT_MESSAGE:
                     is_running = False
                     self.clients.remove(client_connection)

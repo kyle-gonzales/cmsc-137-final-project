@@ -296,7 +296,7 @@ class PowerSelectionMenu:
 
 # TODO: GET name input and family from EYL's welcome screen
 dynasty = ""
-name = ""
+name = "Player"
 
 # TODO: SEND name and dynasty to SERVER
 
@@ -304,7 +304,7 @@ name = ""
 player = None
 
 # TODO: GET enemy name from SERVER
-ename = ""
+ename = "Enemy"
 
 class Client:
     # player info
@@ -436,11 +436,15 @@ class Client:
             except Exception as e:
                 # print(e)
                 pass
-
-            """
-                Handle Message
-            """
-
+            
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.send(Constants.DISCONNECT_MESSAGE)
+                    is_running = False
+                    self.connected = False
+                    pygame.quit()
+                    sys.exit()
+                    
             # if stage_screen is initialized here, the handle events will execute the next screen
             if stage_screen == "Welcome Screen":
                 if "CONNECTED_PLAYER_ONE" in message:
@@ -476,17 +480,6 @@ class Client:
                             self.chosen_family = "Dutete" if family == "Narcos" else "Narcos"
                     print(f"you are in FAMILY: {self.chosen_family}")
                 # removed the stage_screen = game proper
-
-            """
-                Handle Events
-            """
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.send(Constants.DISCONNECT_MESSAGE)
-                    is_running = False
-                    self.connected = False
-                    pygame.quit()
-                    sys.exit()
 
                 if stage_screen == "Welcome Screen":
                     if event.type == pygame.MOUSEBUTTONDOWN:

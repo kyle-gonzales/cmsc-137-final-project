@@ -48,6 +48,22 @@ class Constants:
         "Bo Go": "bogo.png",
     }
 
+    # Power
+    
+    POWERS = {
+        "Guns & Roses": 1399,
+        "Drugs Race": 859,
+        "P*t*ng *n*": 459,
+        "Corruption": 99,
+        "Swiss Miss Bank": 1019,
+        "Debate Na Lang Kaya": 1679,
+        "Tank U": 1599,
+        "Designer Shoes": 619,
+        "Tuna Panga": 479,
+        "I See See": 929,
+        "Bo Go": 1769        
+    }
+
     # Projectile coordinates
     Yi = 390
     PXi = 60

@@ -1,7 +1,7 @@
 import socket
 import threading
 import traceback
-
+import time
 from constants import Constants
 from game_state import GameState
 from player import Player
@@ -29,6 +29,7 @@ class GameServer:
 
     def handle_client(self, client_connection, address):
         is_running = True
+        turns = 1
 
         while is_running:
             try:
@@ -94,35 +95,24 @@ class GameServer:
                     self.game_stage = Constants.GAME_IN_PROGRESS
 
                 elif self.game_stage == Constants.GAME_IN_PROGRESS:
-                    if message.startswith("PLAYER"):
-                        rest_of_message = message.split("|")
-
-                        p_num = rest_of_message[1]
+                    self.broadcast(f"TURN|{turns%2}")
+                    message_split = message.split("|")
+                    p_num = message_split[1]
+                    if message[0] == "PLAYER":
+                        self.broadcast(message)
+                        turns+=1
+                    elif message[0] == "HEALTH":
+                        self.broadcast(message)
+                        if int(message[1]) <= 0:
+                            self.broadcast(f"WINNER|2")
+                            self.game_stage = Constants.GAME_END
+                        elif int(message[2]) <= 0:
+                            self.broadcast(f"WINNER|1")
+                            self.game_stage = Constants.GAME_END
                         
-                        
-                        # Todo update the game state
-
-                        self.game.update("", player)
-
-                        # broadcast the game state to all players
-
-                        self.broadcast(str(self.game))
-
-                    #power, angle, force
-                    # elif message.startswith("LAUNCH"):
-                    #     angle = Constants.ANGLE
-                    #     force = Constants.FORCE
-                    #     power = Constants.POWER
-                    #     isHit = Constants.ISHIT
-
-                    #     if isHit == 1:
-                    #     # newHealth = player.x - power.damage
-                        
-                    #     self.broadcast(f"TRAJECTORY: {angle}, {force}, {power}")
-                    #     self.broadcast(f"NEWHEALTH: {newHealth}")
-
+                    self.broadcast(str(self.game))
                 elif self.game_stage == Constants.GAME_END:
-                    pass
+                    time.sleep(3)
                 else:
                     print(
                         f"INVALID GAME STAGE: '{self.game_stage}' is not a valid game stage"

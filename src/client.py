@@ -609,18 +609,19 @@ class Client:
                     angle = int(input("angle: ")) * math.pi / 180
                     force = runSlider()
                     self.send(f"PLAYER|{p_num}|PROJECTILE|{angle}|{force}|{power}")
-                    isPlayer = 1
-                else:
+                    isPlayer = True
+                else: isPlayer = False
+            elif message_split[0] == "PLAYER":
+                if isPlayer == False:
                     if self.chosen_family == Constants.DUTETE:
                         pactive_color = Constants.WHITE
                         eactive_color = Constants.MAROON
                     else:
                         pactive_color = Constants.WHITE
                         eactive_color = Constants.GREEN
-                    angle = int(message_split[1])
-                    force = int(message_split[2])
-                    power = message_split[3]
-                    isPlayer = 0
+                    angle = int(message_split[3])
+                    force = int(message_split[4])
+                    power = message_split[5]
                 time = 0
                 projectile = Projectile(angle, force, power, isPlayer)
                 launching = True
@@ -648,7 +649,11 @@ class Client:
                         # TODO: display "miss"
                         launching = False
                     elif hits == "fortress": # update health and stop projectile
+                        damage = Constants.POWERS[power]
                         launching = False
+                        if isPlayer and p_num == 1: player.ehealth -= damage
+                        else: player.phealth -= damage
+                        self.send(f"HEALTH|{player.phealth}{player.ehealth}") if isPlayer and p_num == 1 else self.send(f"HEALTH|{player.ehealth}{player.phealth}")
                     else:
                         if index_sp(hits, player.pspecial_powers) != -1: # remove power but dont stop projectile
                             player.basic_powers = player.pspecial_powers.pop(index_sp(hits, player.pspecial_powers))
@@ -660,8 +665,6 @@ class Client:
                         projectile.update(time)
                     
                     pygame.display.flip()
-                
-                self.send(f"PLAYER|{p_num}|HITS|{hits}")
                 
             elif message_split[0] == "HEALTH":
                 player.update_phealth(message_split[1])

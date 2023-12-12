@@ -72,7 +72,7 @@ class Constants:
     #WELCOME SCREEN CONSTANTS
     width, height = 960, 540
     screen = pygame.display.set_mode((width, height))
-    welcome_screen_bg = "Assets/welcome_bg.png"
+    welcome_screen_bg = "../Assets/welcome_bg.png"
     welcome_screen = True
 
     # CHOOSE NAME CONSTANTS
@@ -112,9 +112,9 @@ class Constants:
     narcos_fam_bg = "../Assets/narcos_info.png"
 
     # button paths
-    button_paths = ["Assets/dutete_button.png", "Assets/narcos_button.png"]
-    dutete_button_paths = ["Assets/dutete_button_hovered.png", "Assets/narcos_button.png"]
-    narcos_button_paths = ["Assets/dutete_button.png", "Assets/narcos_button_hovered.png"]
+    button_paths = ["../Assets/dutete_button.png", "../Assets/narcos_button.png"]
+    dutete_button_paths = ["../Assets/dutete_button_hovered.png", "../Assets/narcos_button.png"]
+    narcos_button_paths = ["../Assets/dutete_button.png", "../Assets/narcos_button_hovered.png"]
     button_width, button_height = 300, 85
     button_spacing = 20
 

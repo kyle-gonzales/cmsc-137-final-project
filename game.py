@@ -110,7 +110,11 @@ while run: # Simulates taking turns between player and enemy
     eactive_color = Constants.WHITE if isPlayer%2 else Constants.MAROON
 
     while launching:
-
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            
         # Display fortresses and background
         SCREEN.blit(player.bg, (0,0))
         SCREEN.blit(player.pfort_now, (0,0))
@@ -151,7 +155,3 @@ while run: # Simulates taking turns between player and enemy
 
     pygame.display.flip()
 
-for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            quit()

@@ -1,6 +1,6 @@
 import pygame
 
-from Constants import *
+from constants import *
 
 #used to display the choosen name
 class ChooseName:

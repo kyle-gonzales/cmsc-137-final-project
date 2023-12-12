@@ -1,7 +1,7 @@
 import sys
 import pygame
 
-from Constants import Constants
+from constants import Constants
 from Background import Background
 from Button import Button
 from ChooseName import ChooseName

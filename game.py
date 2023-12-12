@@ -1,9 +1,10 @@
 import pygame
 import math
-from constants import Constants
 import random
+from constants import Constants
 from projectile import Projectile
 from player import Player # you CANNOT import player because this file's name is player. 
+from powerselection import PowerSelectionMenu
 
 def display_special_powers():
     for i in player.pspecial_powers: # (name, x, y)
@@ -92,14 +93,15 @@ while run: # Simulates taking turns between player and enemy
     # TODO: GET signal from SERVER that player should launch a power
     launching = True
 
+    # TODO: GET force from GEL's power menu
+    power = PowerSelectionMenu()
+    power = power.run_menu()
+
     # TODO: GET force from GEL's slider
     force = int(input("force: "))
 
     # TODO: GET angle from EYL's cannon; verify if EYL uses deg or rad
     angle = int(input("angle: ")) * math.pi / 180
-
-    # TODO: GET force from GEL's power menu
-    power = (random.choice(player.basic_powers)).name
 
     # Initialize projectile; isPlayer = 1 means that projectile is launched from the player's side
     projectile = Projectile(angle, force, power, isPlayer%2)

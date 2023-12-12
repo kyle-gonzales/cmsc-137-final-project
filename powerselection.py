@@ -20,16 +20,16 @@ class PowerSelectionMenu:
         self.option_rects = []
         self.selected_options = 0
 
-        self.player = Player(name= "Player", family= "Marcos") #will modify for the actual data from self.player.family
+        self.player = Player(name= "Player", family= "Narcos") #will modify for the actual data from self.player.family
         # self.player = [player.name for player in self.player.name + self.player.family]
  
-        self.player.init_powers()
+        self.player.init_for_client(ename="Enemy")
         self.option_name = [power.name for power in self.player.basic_powers + self.player.special_powers]
         self.option_cost = [str(power.cost) for power in self.player.basic_powers + self.player.special_powers]
         self.option_damage = [str(power.damage) for power in self.player.basic_powers + self.player.special_powers]
         self.coins = self.player.corruption_points
 
-        for idx, text in enumerate(self.option_name):
+        for idx, option_name in enumerate(self.option_name):
             x_pos = self.spacing + idx * (self.button_width + 10)
             y_pos = Constants.HEIGHT - self.menu_height + 3 * self.spacing
             button_rect = pygame.Rect(x_pos, y_pos, self.button_width, self.button_height)
@@ -37,7 +37,7 @@ class PowerSelectionMenu:
 
         self.power_images = {}
         for power_name, image_filename in Constants.POWER_IMAGE_NAME.items():
-            image = pygame.image.load(Constants.IMAGE_PATH + image_filename).convert_alpha()
+            image = pygame.image.load("Assets/" + image_filename).convert_alpha()
             self.power_images[power_name] = pygame.transform.scale(image, (self.button_width, self.button_height))
 
     def draw_text(self, text, color, x, y, center=False, font_size=20):

@@ -1,7 +1,7 @@
 import pygame
 import sys
 
-from power import Power, SpecialPower
+from power import Power
 from constants import Constants
 from player import Player
 

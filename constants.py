@@ -16,7 +16,11 @@ class Constants:
     DISCONNECT_MESSAGE = "!DISCONNECT"
 
     HEADER_SIZE = 64
-
+    
+    # Dynasty names
+    NARCOS = "NARCOS"
+    DUTETE = "DUTETE"
+    
     # Screen dimensions
     WIDTH = 960
     HEIGHT = 540
@@ -44,11 +48,22 @@ class Constants:
         "Bo Go": "bogo.png",
     }
 
-    IMAGE_PATH = "./Assets/"  # changed from "cmsc-137-final-project/Assets/"
-
+    # Projectile coordinates
+    Yi = 390
+    PXi = 60
+    EXi = 900
+    
+    # Special Power
+    SPSIZE = (60, 60)
+    SPX1 = 250
+    SPX2 = 630
+    SPY1 = 120
+    SPY2 = 220
+    
     # Font
-    # # Architype Aubette Source: https://www.onlinewebfonts.com/download/26afb49b8b7dda2c10686589d6fc7b55
-    # pygame.init()
-    # ARCH32 = pygame.font.Font("Assets/Architype_Aubette.ttf", 32)
-    # ARCH24 = pygame.font.Font("Assets/Architype_Aubette.ttf", 24)
-    # ARCH20 = pygame.font.Font("Assets/Architype_Aubette.ttf", 20)
+    pygame.init()
+    FONT32 = pygame.font.Font(None, 32)
+    FONT24 = pygame.font.Font(None, 24)
+    FONTH20 = pygame.font.Font(None, 20)
+    
+    

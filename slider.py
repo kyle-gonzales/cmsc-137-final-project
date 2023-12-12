@@ -93,11 +93,7 @@ class SliderRun:
                     self.slider.moving = False
         return True
     
-def main():
+def runSlider():
     slider = SliderRun()
     value = slider.run() 
     return value
-
-if __name__ == "__main__":
-    # main()
-    print("Power Value:", main())

@@ -309,7 +309,7 @@ ename = ""
 class Client:
     # player info
 
-    server = "192.168.0.108"  # paste the IP of the server here
+    server = "192.168.101.7"  # paste the IP of the server here
 
     is_player_one = False
     player_name = ""  # ! player names should be unique
@@ -493,7 +493,7 @@ class Client:
                         if event.button == 1:
                             # if connected proceed to enter name screen
                             if self.connected:
-                                game.connected()
+                                game.start_connect()
                                 stage_screen = "Enter Name Screen"
                             else:
                                 self.connect()

@@ -21,6 +21,9 @@ clock = pygame.time.Clock()
 SCREEN_WIDTH = Constants.WIDTH - 700
 SCREEN_HEIGHT = Constants.HEIGHT + 200
 
+pactive_color = None
+eactive_color = None
+
 def display_special_powers():
     for i in player.pspecial_powers: # (name, x, y)
         # shine bg
@@ -174,11 +177,6 @@ def runSlider():
     slider = SliderRun()
     return slider.run()
 
-def index_sp(power, special_powers):
-    for i in range(len(special_powers)):
-        if special_powers[i][0] == power: return i
-    return -1
-
 class PowerSelectionMenu:
     def __init__(self, family1):
         pygame.init()
@@ -194,14 +192,10 @@ class PowerSelectionMenu:
         self.option_rects = []
         self.selected_options = 0
 
-        self.player = Player(name, family1) #will modify for the actual data from self.player.family
-        # self.player = [player.name for player in self.player.name + self.player.family]
-
-        self.player.init_for_client(ename="Enemy")
-        self.option_name = [power.name for power in self.player.basic_powers + self.player.special_powers]
-        self.option_cost = [str(power.cost) for power in self.player.basic_powers + self.player.special_powers]
-        self.option_damage = [str(power.damage) for power in self.player.basic_powers + self.player.special_powers]
-        self.coins = self.player.corruption_points
+        self.option_name = [power.name for power in player.basic_powers]
+        self.option_cost = [str(power.cost) for power in player.basic_power]
+        self.option_damage = [str(power.damage) for power in player.basic_powers]
+        player.corruption_points = player.corruption_points
 
         for idx, option_name in enumerate(self.option_name):
             x_pos = self.spacing + idx * (self.button_width + 10)
@@ -269,7 +263,7 @@ class PowerSelectionMenu:
                 self.draw_text(self.option_damage[idx], Constants.WHITE, text_rect.x + self.button_width // 2, text_rect.y + 105, center=True, font_size=24)
             
             self.draw_text("Powers", Constants.WHITE, 20, Constants.HEIGHT - self.menu_height + 20, font_size=32)
-            self.draw_text(f"Corruption Points: {self.coins}", Constants.WHITE, self.menu_width - 170, Constants.HEIGHT - self.menu_height + 20, font_size=20)
+            self.draw_text(f"Corruption Points: {player.corruption_points}", Constants.WHITE, self.menu_width - 170, Constants.HEIGHT - self.menu_height + 20, font_size=20)
             self.draw_text("Select", Constants.BLACK, self.menu_width // 2, Constants.HEIGHT - self.menu_height + 215, center=True, font_size= 30)
             pygame.display.update()
 
@@ -293,6 +287,9 @@ class PowerSelectionMenu:
                         if select_button.collidepoint(mouse_pos):
                             selected_power = self.option_name[self.selected_options]
                             select_button.inflate_ip(5, 5)
+                            index = index_sp(selected_power, player.basic_powers)
+                            cost = (player.basic_powers[index]).cost
+                            player.corruption_points -= cost
                             return selected_power 
 
         pygame.quit()
@@ -654,7 +651,8 @@ class Client:
                         launching = False
                     else:
                         if index_sp(hits, player.pspecial_powers) != -1: # remove power but dont stop projectile
-                            print(player.pspecial_powers.pop(index_sp(hits, player.pspecial_powers))) 
+                            player.basic_powers = player.pspecial_powers.pop(index_sp(hits, player.pspecial_powers))
+                            
                         elif index_sp(hits, player.especial_powers) != -1: # remove power but dont stop projectile
                             print(player.especial_powers.pop(index_sp(hits, player.especial_powers))) 
                         projectile.draw(SCREEN, clock)

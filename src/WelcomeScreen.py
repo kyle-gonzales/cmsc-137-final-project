@@ -28,10 +28,17 @@ def welcome_screen():
                         #tries to connect to the server
                         connected = game.start_connect()
                         if connected:
-                            stage_screen = "Enter Name Screen"
+                            stage_screen = "Disclaimer"
+                            game.disclaimer()
                         #if not connected, stays on the welcome screen
                         else:
                             pass
+
+            elif stage_screen == "Disclaimer":
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        stage_screen = "Enter Name Screen"
+                        connected = game.start_connect()
 
             elif stage_screen == "Enter Name Screen":
                 if event.type == pygame.KEYDOWN:

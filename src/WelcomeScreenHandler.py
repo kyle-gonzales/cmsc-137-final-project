@@ -37,6 +37,10 @@ class WelcomeScreenHandler:
             Constants.screen
         )
 
+    def disclaimer(self):
+        self.bg = Background(self.constants.disclaimerbg, self.constants.screen)
+    
+
     def start_connect(self):
         #if connected to server: assumes true for now
         connected = True

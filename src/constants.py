@@ -79,6 +79,7 @@ class Constants:
 
     # background
     choose_name_bg = "../Assets/choose_name_bg.png"
+    disclaimerbg = "../Assets/disclaimer.png"
 
     # Colors for the loading
     white = (255, 255, 255)

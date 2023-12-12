@@ -101,3 +101,8 @@ class Constants:
             "state": "False",
         },
     }
+
+    ANGLE = 0
+    FORCE = 0
+    POWER = 0
+    ISHIT = 0

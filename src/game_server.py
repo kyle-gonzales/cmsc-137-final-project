@@ -110,6 +110,19 @@ class GameServer:
 
                         self.broadcast(str(self.game))
 
+                    #power, angle, force
+                    # elif message.startswith("LAUNCH"):
+                    #     angle = Constants.ANGLE
+                    #     force = Constants.FORCE
+                    #     power = Constants.POWER
+                    #     isHit = Constants.ISHIT
+
+                    #     if isHit == 1:
+                    #     # newHealth = player.x - power.damage
+                        
+                    #     self.broadcast(f"TRAJECTORY: {angle}, {force}, {power}")
+                    #     self.broadcast(f"NEWHEALTH: {newHealth}")
+
                 elif self.game_stage == Constants.GAME_END:
                     pass
                 else:

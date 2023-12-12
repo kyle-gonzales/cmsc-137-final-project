@@ -121,3 +121,5 @@ class Constants:
     "Narcos": {"bg": "Assets/NarcosBG.png", "barrel": "Assets/narcos_cannon_barrel.png", "stand": "Assets/narcos_cannon_stand.png", "cannon": "Assets/dutete_cannon_zero.png", "state" : "False"},
     "Dutete": {"bg": "Assets/DuteteBG.png", "barrel": "Assets/dutete_cannon_barrel.png", "stand": "Assets/dutete_cannon_stand.png", "cannon": "Assets/narcos_cannon_zero.png", "state" : "False"}
     }
+
+    

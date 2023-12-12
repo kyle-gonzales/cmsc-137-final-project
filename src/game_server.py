@@ -95,14 +95,12 @@ class GameServer:
 
                 elif self.game_stage == Constants.GAME_IN_PROGRESS:
                     if message.startswith("PLAYER"):
-                        _, player_id, x = message.split("-")
+                        rest_of_message = message.split("|")
 
-                        player_id = tuple([int(x) for x in player_id.split(",")])  # rgb
-
+                        p_num = rest_of_message[1]
+                        
+                        
                         # Todo update the game state
-
-                        player: Player = self.game.players.get(player_id)
-                        player.x = x
 
                         self.game.update("", player)
 

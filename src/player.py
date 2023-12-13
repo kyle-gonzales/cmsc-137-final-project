@@ -20,36 +20,36 @@ class Player:
         # p = player; e = enemy
         self.ename = ename.upper()
         # images, color
-        self.bg = pygame.image.load("Assets/NarcosBG.png") if self.family == Constants.NARCOS else pygame.image.load("Assets/DuteteBG.png")
+        self.bg = pygame.image.load("../Assets/NarcosBG.png") if self.family == Constants.NARCOS else pygame.image.load("../Assets/DuteteBG.png")
         self.pcolor = Constants.MAROON if self.family == Constants.NARCOS else Constants.GREEN
         self.ecolor = Constants.GREEN if self.family == Constants.NARCOS else Constants.MAROON
         if self.family == Constants.NARCOS:
-            self.pfort = [pygame.image.load("Assets/NarcosFortress.png"), 
-                    pygame.image.load("Assets/NarcosFortress75.png"),
-                    pygame.image.load("Assets/NarcosFortress50.png"),
-                    pygame.image.load("Assets/NarcosFortress25.png"),
+            self.pfort = [pygame.image.load("../Assets/NarcosFortress.png"), 
+                    pygame.image.load("../Assets/NarcosFortress75.png"),
+                    pygame.image.load("../Assets/NarcosFortress50.png"),
+                    pygame.image.load("../Assets/NarcosFortress25.png"),
                     #pygame.image.load("Assets/NarcosFortress0.png")
                     ] 
-            self.efort = [pygame.image.load("Assets/DuteteFortress.png"),
-                    pygame.image.load("Assets/DuteteFortress75.png"),
-                    pygame.image.load("Assets/DuteteFortress50.png"),
-                    pygame.image.load("Assets/DuteteFortress25.png"),
+            self.efort = [pygame.image.load("../Assets/DuteteFortress.png"),
+                    pygame.image.load("../Assets/DuteteFortress75.png"),
+                    pygame.image.load("../Assets/DuteteFortress50.png"),
+                    pygame.image.load("../Assets/DuteteFortress25.png"),
                     #pygame.image.load("Assets/DuteteFortress0.png")
                     ]
             for i in range(len(self.efort)):
                 self.pfort[i] = pygame.transform.flip(self.pfort[i], True, False)
                 self.efort[i] = pygame.transform.flip(self.efort[i], True, False)
         else:
-            self.pfort = [pygame.image.load("Assets/DuteteFortress.png"),
-                    pygame.image.load("Assets/DuteteFortress75.png"),
-                    pygame.image.load("Assets/DuteteFortress50.png"),
-                    pygame.image.load("Assets/DuteteFortress25.png"),
+            self.pfort = [pygame.image.load("../Assets/DuteteFortress.png"),
+                    pygame.image.load("../Assets/DuteteFortress75.png"),
+                    pygame.image.load("../Assets/DuteteFortress50.png"),
+                    pygame.image.load("../Assets/DuteteFortress25.png"),
                     #pygame.image.load("Assets/DuteteFortress0.png")
                     ]
-            self.efort = [pygame.image.load("Assets/NarcosFortress.png"), 
-                    pygame.image.load("Assets/NarcosFortress75.png"),
-                    pygame.image.load("Assets/NarcosFortress50.png"),
-                    pygame.image.load("Assets/NarcosFortress25.png"),
+            self.efort = [pygame.image.load("../Assets/NarcosFortress.png"), 
+                    pygame.image.load("../Assets/NarcosFortress75.png"),
+                    pygame.image.load("../Assets/NarcosFortress50.png"),
+                    pygame.image.load("../Assets/NarcosFortress25.png"),
                     #pygame.image.load("Assets/NarcosFortress0.png")
                     ]
         self.pfort_now = self.pfort[0]

@@ -21,8 +21,10 @@ clock = pygame.time.Clock()
 SCREEN_WIDTH = Constants.WIDTH - 700
 SCREEN_HEIGHT = Constants.HEIGHT + 200
 
-pactive_color = None
-eactive_color = None
+pactive_color = Constants.BLACK
+eactive_color = Constants.BLACK
+
+player = Player("Narcos", "placeholder")
 
 def display_special_powers():
     for i in player.pspecial_powers: # (name, x, y)
@@ -45,7 +47,7 @@ def display_special_powers():
 def display_header():
     # TODO: add name, health bar for both player and enemy
     pname_text = Constants.FONT32.render(player.name, True, pactive_color)
-    ename_text = Constants.FONT32.render(player.ename, True, eactive_color)
+    ename_text = Constants.FONT32.render(ename, True, eactive_color)
     ename_text_rect = ename_text.get_rect()
     ename_text_rect.topright = (820,30)
     SCREEN.blit(pname_text, (140, 30))
@@ -77,7 +79,7 @@ def index_sp(power, special_powers):
     for i in range(len(special_powers)):
         if special_powers[i][0] == power: return i
     return -1
-
+ename = ""
 class Slider:
     def __init__(self):
         self.width = 20
@@ -294,22 +296,11 @@ class PowerSelectionMenu:
 
         pygame.quit()
 
-# TODO: GET name input and family from EYL's welcome screen
-dynasty = ""
-name = "Player"
-
-# TODO: SEND name and dynasty to SERVER
-
-# Initialize player in client's side
-player = None
-
-# TODO: GET enemy name from SERVER
-ename = "Enemy"
-
+ename = ""
 class Client:
     # player info
 
-    server = "192.168.101.7"  # paste the IP of the server here
+    server = "192.168.229.10"  # paste the IP of the server here
 
     is_player_one = False
     player_name = ""  # ! player names should be unique
@@ -361,13 +352,15 @@ class Client:
 
         print(f"RECEIVED FROM SERVER: {message}")
         return message
-
+    
     def main_game(self):
         is_running = True
         clock = pygame.time.Clock()
 
         x = 50
 
+        print("main")
+        
         while is_running:
             message = ""
             """
@@ -378,7 +371,8 @@ class Client:
             except Exception as e:
                 # print(e)
                 pass
-
+            print(message)
+            
             # Event handling
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -436,16 +430,7 @@ class Client:
             except Exception as e:
                 # print(e)
                 pass
-            
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.send(Constants.DISCONNECT_MESSAGE)
-                    is_running = False
-                    self.connected = False
-                    pygame.quit()
-                    sys.exit()
-                    
-            # if stage_screen is initialized here, the handle events will execute the next screen
+         # if stage_screen is initialized here, the handle events will execute the next screen
             if stage_screen == "Welcome Screen":
                 if "CONNECTED_PLAYER_ONE" in message:
                     # stage_screen = "Enter Name Screen"
@@ -479,7 +464,21 @@ class Client:
                         else:
                             self.chosen_family = "Dutete" if family == "Narcos" else "Narcos"
                     print(f"you are in FAMILY: {self.chosen_family}")
-                # removed the stage_screen = game proper
+                elif message.startswith("NAMES"):
+                    names = message.split("|")
+                    if self.player_name == names[1]: ename = names[2]
+                    elif self.player_name == names[2]: ename = names[1]
+
+            """
+                Handle Events
+            """
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.send(Constants.DISCONNECT_MESSAGE)
+                    is_running = False
+                    self.connected = False
+                    pygame.quit()
+                    sys.exit()
 
                 if stage_screen == "Welcome Screen":
                     if event.type == pygame.MOUSEBUTTONDOWN:
@@ -512,17 +511,16 @@ class Client:
                                 #will also call the game proper screen to initialize the cannons
                                 if self.chosen_family != "":
                                     self.send(
-                                        f"FAMILY1|{self.player_name}|{self.chosen_family}"
+                                        f"FAMILY1|{self.chosen_family}"
                                     )
                                     self.game_proper_screen()
 
                             else:
                                 print("waiting for player 1 to select the family")
-
-                    if not self.is_player_one:
-                        if self.chosen_family != "":
-                            stage_screen = "Game Proper Screen"
-                            self.game_proper_screen()
+                    if message.startswith("FAMILY2") and not(self.is_player_one):
+                        player.family == message.split("|")[1]
+                        stage_screen = "Game Proper Screen"
+                        self.game_proper_screen()
 
             """
                 Update Display
@@ -537,15 +535,21 @@ class Client:
 
             pygame.display.flip()
             pygame.time.Clock().tick(60)
+            
     
     def game_proper_screen(self):
         p_num = 1 if self.is_player_one else 2
-        name = "" #TODO: get name from server
-        player = Player(name, dynasty)
+        player = Player(self.player_name, self.chosen_family)
+        print(player)
         # TODO: GET enemy name from SERVER
-        ename = ""
-
         # Initialize player's other attributes
+        if self.is_player_one:
+            if self.chosen_family == Constants.DUTETE:
+                pactive_color = Constants.GREEN
+                eactive_color = Constants.WHITE
+            else:
+                pactive_color = Constants.MAROON
+                eactive_color = Constants.WHITE
         player.init_for_client(ename)
         player.init_special_powers_coordinates()
         player.update_phealth(10000)

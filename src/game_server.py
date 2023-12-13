@@ -7,7 +7,6 @@ from game_state import GameState
 from player import Player
 from util import *
 
-
 class GameServer:
     def __init__(self) -> None:
         self.clients = []
@@ -28,6 +27,7 @@ class GameServer:
         print("SERVER INITIALIZED: Game created successfully...")
 
     def handle_client(self, client_connection, address):
+        names = []
         is_running = True
         turns = 1
 
@@ -46,8 +46,6 @@ class GameServer:
                 message: str = client_connection.recv(message_length).decode(
                     Constants.FORMAT
                 )
-
-                print(message)
 
                 if message == Constants.DISCONNECT_MESSAGE:
                     is_running = False
@@ -70,36 +68,25 @@ class GameServer:
 
                     elif message.startswith("CONNECT"):
                         name = message.split("|")[1]
-                        player = Player(name)
-                        self.game.update(name, player)
+                        names.append(name)
                         self.broadcast("CONNECTED " + str(name))
                         if self.connected_players_count == 2:
                             self.game_stage = Constants.GAME_START
+                            self.broadcast(f"NAMES|{names[0]}|{names[1]}")
+                    elif message.startswith("FAMILY1"):
+                        family = message.split("|")[1]
+                        print(family)
+                        self.broadcast("FAMILY2|Narcos") if family == Constants.DUTETE else self.broadcast("P2FAMILY|Dutete")
+                        self.broadcast(str(self.game))
                     else:
                         self.broadcast(  # for testing
                             "cannot select family until player 2 connects..."
                         )
-
-                elif self.game_stage == Constants.GAME_START:
-                    if message.startswith("FAMILY"):
-                        name, family = message.split("|")[1:]
-
-                        for n, player in self.game.players.items():
-                            if name == n:
-                                player.family = family
-                            else:
-                                player.family = "Dutete" if family == "Narcos" else "Narcos"
-                                # choose the family opposite to the selected family
-                            self.game.update(n, player)
-
-                        # TODO: UPDATE THE FAMILY FOR THE OTHER PLAYER
-                        self.broadcast(str(self.game))
                     self.game_stage = Constants.GAME_IN_PROGRESS
 
                 elif self.game_stage == Constants.GAME_IN_PROGRESS:
                     self.broadcast(f"TURN|{turns%2}")
                     message_split = message.split("|")
-                    p_num = message_split[1]
                     if message[0] == "PLAYER":
                         self.broadcast(message)
                         turns+=1

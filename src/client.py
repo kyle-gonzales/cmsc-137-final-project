@@ -8,7 +8,7 @@ from projectile import Projectile
 from player import Player
 from constants import Constants
 from util import *
-from WelcomeScreenHandler import WelcomeScreenHandler
+#from WelcomeScreenHandler import WelcomeScreenHandler
 from GameProperHandler import GameProperHandler
 
 pygame.init()
@@ -29,18 +29,18 @@ player = Player("Narcos", "placeholder")
 def display_special_powers():
     for i in player.pspecial_powers: # (name, x, y)
         # shine bg
-        shine = pygame.image.load("Assets/shine.png")
+        shine = pygame.image.load("../Assets/shine.png")
         SCREEN.blit(shine, (i[1], i[2]))
         # power icon
-        img = pygame.image.load("Assets/" + Constants.POWER_IMAGE_NAME[i[0]])
+        img = pygame.image.load("../Assets/" + Constants.POWER_IMAGE_NAME[i[0]])
         img = pygame.transform.scale(img, Constants.SPSIZE)
         SCREEN.blit(img, (i[1]+20, i[2]+20))
     for i in player.especial_powers:
         # shine bg
-        poison = pygame.image.load("Assets/poison.png")
+        poison = pygame.image.load("../Assets/poison.png")
         SCREEN.blit(poison, (i[1], i[2]))
         # power icon
-        img = pygame.image.load("Assets/" + Constants.POWER_IMAGE_NAME[i[0]])
+        img = pygame.image.load("../Assets/" + Constants.POWER_IMAGE_NAME[i[0]])
         img = pygame.transform.scale(img, Constants.SPSIZE)
         SCREEN.blit(img, (i[1]+20, i[2]+20))
 
@@ -54,8 +54,8 @@ def display_header():
     SCREEN.blit(ename_text, (675, 30))
 
     # Avatar
-    pavatar = pygame.image.load("Assets/narcos_avatar.png") if player.family == Constants.NARCOS else pygame.image.load("Assets/dutete_avatar.png")
-    eavatar = pygame.image.load("Assets/dutete_avatar.png") if player.family == Constants.NARCOS else pygame.image.load("Assets/narcos_avatar.png")
+    pavatar = pygame.image.load("../Assets/narcos_avatar.png") if player.family == Constants.NARCOS else pygame.image.load("../Assets/dutete_avatar.png")
+    eavatar = pygame.image.load("../Assets/dutete_avatar.png") if player.family == Constants.NARCOS else pygame.image.load("../Assets/narcos_avatar.png")
     pygame.draw.circle(SCREEN, pactive_color, (80,80), 50)
     pygame.draw.circle(SCREEN, eactive_color, (880,80), 50)
     SCREEN.blit(pavatar, (40,40))
@@ -139,7 +139,133 @@ class Slider:
         value_range = 150 - 50
         ratio = (self.position / self.range_width)
         return int(50 + (ratio * value_range))
+from Background import Background
+from Button import Button
+from Cannon import Cannon
+from CannonMovement import CannonMovement
+from ChooseName import ChooseName
+from constants import Constants
+from Movement import Movement
 
+
+# functions needed for the welcome screen
+class WelcomeScreenHandler:
+    def __init__(self, SCREEN):
+        self.constants = Constants()
+        self.player_name = ""
+        self.setup_objects()
+        self.family_name = ""
+        self.bg = Background(self.constants.welcome_screen_bg, SCREEN)
+        self.barrel_image = None
+        self.stand_image = None
+        self.cannon_image = None
+        self.barrel_image = None
+        self.rotated_image = None
+        self.rotated_image_rect = None
+
+    def setup_objects(self):
+        self.chooseName = ChooseName(
+            Constants.WIDTH,
+            Constants.HEIGHT,
+            Constants.max_characters,
+            Constants.font,
+            Constants.white,
+            Constants.gray,
+            Constants.dots,
+            SCREEN,
+        )
+        self.button = Button(
+            Constants.button_paths,
+            Constants.button_width,
+            Constants.button_height,
+            Constants.button_spacing,
+            SCREEN,
+        )
+    
+    def start_connect(self):
+        #if connected to server: assumes true for now
+        connected = True
+        if connected:
+            self.bg = Background(self.constants.choose_name_bg, SCREEN)
+            pass
+        else:
+            connected = False
+    
+        return connected
+
+
+    # returns the player name if not empty
+    def enter_name(self):
+        if self.player_name != "":
+            self.bg = Background(Constants.choose_fam_bg, SCREEN)
+
+            return self.player_name
+        else:
+            print("Player name is blank")
+
+    # removes character from player name
+    def remove_character(self):
+        self.player_name = self.player_name[:-1]
+        if len(self.player_name) > Constants.max_characters:
+            self.player_name = self.player_name[: Constants.max_characters]
+
+    # adds character to player name
+    def add_character(self, event):
+        if len(self.player_name) < Constants.max_characters:
+            self.player_name += event.unicode
+
+    # returns family chosen
+    def choose_family(self, event):
+        clicked_button_path = self.button.is_clicked(event.pos)
+
+        if clicked_button_path == "../Assets/dutete_button.png":
+            # Reset the button and set background for Dutete screen
+            self.button = Button(
+                Constants.dutete_button_paths,
+                Constants.button_width,
+                Constants.button_height,
+                Constants.button_spacing,
+                SCREEN,
+            )
+            self.bg = Background(Constants.dutete_fam_bg, SCREEN)
+
+        # return dutete family
+        elif clicked_button_path == "../Assets/dutete_button_hovered.png":
+            self.family_name = "Dutete"
+
+
+        elif clicked_button_path == "../Assets/narcos_button.png":
+            # Reset the button and set background for Narcos screen
+            self.button = Button(
+                Constants.narcos_button_paths,
+                Constants.button_width,
+                Constants.button_height,
+                Constants.button_spacing,
+                SCREEN,
+            )
+            self.bg = Background(Constants.narcos_fam_bg, SCREEN)
+
+        # return narcos family
+        elif clicked_button_path == "../Assets/narcos_button_hovered.png":
+            self.family_name = "Narcos"
+
+        return self.family_name
+
+    # draws button for choose family screen
+    def draw_buttons(self):
+        self.button.draw(SCREEN)
+
+    # displays background
+    def display_background(self):
+        SCREEN.blit(self.bg.scale_image(), (0, 0))
+
+    # displays name
+    def display_name(self):
+        self.chooseName.draw_screen(
+            Constants.prompt_text,
+            self.player_name,
+            Constants.display_default_underscores,
+        )
 class SliderRun:
     def __init__(self):
         pygame.init()
@@ -415,7 +541,7 @@ class Client:
         sys.exit()
 
     def welcome_screen(self):
-        game = WelcomeScreenHandler()
+        game = WelcomeScreenHandler(SCREEN)
 
         stage_screen = "Welcome Screen"
         is_running = True
